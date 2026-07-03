@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>ゴルフ神動画ライブラリ | 特選アイテム</title>
+    <title>ゴルフ神動画ライブラリ</title>
     <style>
         /* 高級感のあるゴルフメディア風デザイン（黒基調×グリーンアクセント） */
         :root {
@@ -39,13 +39,24 @@
             text-align: center;
             padding: 12px 0;
             border-bottom: 1px solid #333;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
 
         header h1 {
-            font-size: 18px;
+            font-size: 16px;
+            color: var(--text-sub);
             margin: 0;
             letter-spacing: 1px;
+            font-weight: normal;
+        }
+
+        /* 小項目タイトル（一等地の上にドンと表示） */
+        .sub-title {
+            font-size: 24px;
+            font-weight: bold;
+            text-align: center;
+            color: var(--text-color);
+            margin: 10px 0 20px 0;
         }
 
         /* 16:9 動画プレイヤー枠 */
@@ -57,7 +68,7 @@
             border-radius: 12px;
             overflow: hidden;
             box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-            margin-bottom: 24px;
+            margin-bottom: 15px; /* 動画同士の隙間 */
         }
 
         .video-container iframe {
@@ -72,7 +83,7 @@
         .section-title {
             font-size: 14px;
             color: var(--text-sub);
-            margin-bottom: 10px;
+            margin: 25px 0 10px 0;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
@@ -84,13 +95,6 @@
             padding: 16px;
             margin-bottom: 24px;
             box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-        }
-
-        .item-title {
-            font-size: 16px;
-            font-weight: bold;
-            margin-bottom: 12px;
-            line-height: 1.4;
         }
 
         .btn-group {
@@ -164,16 +168,19 @@
 
     <div class="container">
         <header>
-            <h1 id="main-header">ゴルフ神動画ライブラリ</h1>
+            <h1>ゴルフ神動画ライブラリ</h1>
         </header>
 
-        <div class="video-container">
-            <iframe id="video-player" src="https://www.youtube.com/embed/dQw4w9WgXcQ" allowfullscreen></iframe>
+        <div id="page-title" class="sub-title">おすすめ神動画</div>
+
+        <div id="video-area">
+            <div class="video-container"><iframe id="video-1" src="" allowfullscreen></iframe></div>
+            <div class="video-container"><iframe id="video-2" src="" allowfullscreen></iframe></div>
+            <div class="video-container"><iframe id="video-3" src="" allowfullscreen></iframe></div>
         </div>
 
         <div class="section-title">▼ 今売れている・上達を加速させる神ヒットギア</div>
         <div class="item-card">
-            <div id="item-title" class="item-title">おすすめゴルフギア</div>
             <div class="btn-group">
                 <a href="https://www.amazon.co.jp/gp/bestsellers/sports/14315441" target="_blank" class="btn btn-amazon">Amazonで見る</a>
                 <a id="rakuten-link" href="https://www.rakuten.co.jp" target="_blank" class="btn btn-rakuten">楽天市場で見る</a>
@@ -195,37 +202,48 @@
     <script>
         /**
          * 【37項目 出し分けデータ管理データベース】
-         * ここに各項目のID、タイトル、YouTube動画ID、楽天URLを登録します。
+         * ここに ManyChat 用のIDと、それに紐づくデータを追加していきます。
          */
         const videoDatabase = {
-            // 例：ドライバーの「スライス」
-            "dr-slice": {
-                title: "ドライバー：スライス改善特選ギア",
-                youtubeId: "dQw4w9WgXcQ", // YouTubeの動画ID（embed/の後の文字列）
-                rakutenUrl: "https://www.rakuten.co.jp" // 対象の楽天URL
-            },
-            // 例：パターの「ショートパット」
-            "pt-short": {
-                title: "パター：ショートパット極意ギア",
-                youtubeId: "dQw4w9WgXcQ",
-                rakutenUrl: "https://www.rakuten.co.jp"
+            // ドライバー：スライス
+            "driver-slice": {
+                title: "ドライバー スライス",
+                // watch?v= の後ろにある11文字の動画IDを3本指定
+                youtubeIds: [
+                    "PY0jqwFw6zc",
+                    "Fi7p5H93tNM",
+                    "Bkv7GgDcKm4"
+                ],
+                rakutenUrl: "https://a.r10.to/hR5uL4"
             }
-            // ※今後ここに残りの35項目を同じ形式で追記していきます。
+            // ※残りの36項目もここに同じ形式で追加していきます！
         };
 
-        // URLパラメータ（?id=xxxx）を取得するプログラム
+        // URLパラメータ（?id=xxxx）を読み取って画面を書き換えるプログラム
         function loadContent() {
             const urlParams = new URLSearchParams(window.location.search);
             const id = urlParams.get('id');
 
-            // データベースにIDが存在する場合、中身を自動で書き換える
+            // データベースにIDが存在する場合
             if (id && videoDatabase[id]) {
                 const data = videoDatabase[id];
                 
-                // タイトル、動画URL、楽天URLの書き換え
-                document.getElementById('item-title').textContent = data.title;
-                document.getElementById('video-player').src = "https://www.youtube.com/embed/" + data.youtubeId;
+                // タイトルと楽天URLを書き換え
+                document.getElementById('page-title').textContent = data.title;
                 document.getElementById('rakuten-link').href = data.rakutenUrl;
+                
+                // 3本の動画プレイヤーにURLをセット
+                document.getElementById('video-1').src = "https://www.youtube.com/embed/" + data.youtubeIds[0];
+                document.getElementById('video-2').src = "https://www.youtube.com/embed/" + data.youtubeIds[1];
+                document.getElementById('video-3').src = "https://www.youtube.com/embed/" + data.youtubeIds[2];
+            } else {
+                // IDが未指定、またはエラー時のデフォルト表示（例としてスライスを表示）
+                const defaultData = videoDatabase["driver-slice"];
+                document.getElementById('page-title').textContent = defaultData.title;
+                document.getElementById('rakuten-link').href = defaultData.rakutenUrl;
+                document.getElementById('video-1').src = "https://www.youtube.com/embed/" + defaultData.youtubeIds[0];
+                document.getElementById('video-2').src = "https://www.youtube.com/embed/" + defaultData.youtubeIds[1];
+                document.getElementById('video-3').src = "https://www.youtube.com/embed/" + defaultData.youtubeIds[2];
             }
         }
 
