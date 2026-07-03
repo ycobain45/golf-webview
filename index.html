@@ -39,23 +39,33 @@
             text-align: center;
             padding: 12px 0;
             border-bottom: 1px solid #333;
-            margin-bottom: 16px;
+            margin-bottom: 15px;
         }
 
         header h1 {
-            font-size: 16px;
-            color: var(--text-sub);
+            font-size: 18px;
             margin: 0;
             letter-spacing: 1px;
-            font-weight: normal;
         }
 
-        /* 小項目タイトル（一等地の上に配置） */
-        .sub-title {
-            font-size: 22px;
+        /* 小項目タイトル表示スペース */
+        .sub-header {
+            text-align: center;
+            font-size: 16px;
             font-weight: bold;
-            color: #ffffff;
-            margin: 8px 0 0 0;
+            color: var(--accent-color);
+            margin-bottom: 20px;
+            background-color: #1a2e1a;
+            padding: 8px;
+            border-radius: 6px;
+            border: 1px solid #244d24;
+        }
+
+        .section-title {
+            font-size: 14px;
+            color: var(--text-sub);
+            margin-bottom: 10px;
+            text-transform: uppercase;
             letter-spacing: 0.5px;
         }
 
@@ -63,7 +73,7 @@
         .video-list {
             display: flex;
             flex-direction: column;
-            gap: 16px;
+            gap: 14px;
             margin-bottom: 24px;
         }
 
@@ -86,15 +96,6 @@
             border: 0;
         }
 
-        .section-title {
-            font-size: 13px;
-            color: var(--text-sub);
-            margin-bottom: 10px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            font-weight: bold;
-        }
-
         /* 一等地：現物物販カード */
         .item-card {
             background-color: var(--card-bg);
@@ -104,10 +105,18 @@
             box-shadow: 0 4px 10px rgba(0,0,0,0.3);
         }
 
+        .item-title {
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 12px;
+            line-height: 1.5;
+            color: #ffffff;
+        }
+
         .btn-group {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 12px;
+            gap: 10px;
         }
 
         .btn {
@@ -176,17 +185,26 @@
     <div class="container">
         <header>
             <h1>ゴルフ神動画ライブラリ</h1>
-            <div id="page-title" class="sub-title">おすすめ動画</div>
         </header>
 
+        <div id="sub-header" class="sub-header">おすすめ神動画</div>
+
+        <div class="section-title">▼ 厳選された神動画3選</div>
         <div class="video-list">
-            <div class="video-container"><iframe id="video-1" src="" allowfullscreen></iframe></div>
-            <div class="video-container"><iframe id="video-2" src="" allowfullscreen></iframe></div>
-            <div class="video-container"><iframe id="video-3" src="" allowfullscreen></iframe></div>
+            <div class="video-container">
+                <iframe id="video-1" src="" allowfullscreen></iframe>
+            </div>
+            <div class="video-container">
+                <iframe id="video-2" src="" allowfullscreen></iframe>
+            </div>
+            <div class="video-container">
+                <iframe id="video-3" src="" allowfullscreen></iframe>
+            </div>
         </div>
 
         <div class="section-title">▼ 今売れている・上達を加速させる神ヒットギア</div>
         <div class="item-card">
+            <div id="item-title" class="item-title">おすすめゴルフギアの詳細はこちら</div>
             <div class="btn-group">
                 <a href="https://www.amazon.co.jp/gp/bestsellers/sports/14315441" target="_blank" class="btn btn-amazon">Amazonで見る</a>
                 <a id="rakuten-link" href="https://www.rakuten.co.jp" target="_blank" class="btn btn-rakuten">楽天市場で見る</a>
@@ -207,35 +225,38 @@
 
     <script>
         /**
-         * 【37項目 出し分けデータデータベース】
-         * ManyChatで指定するIDと、表示したいデータをここに並べていきます。
+         * ⛳️【37項目マスターデータベース】
+         * YouTubeの通常のURL(watch?v=xxxx)を入れるだけで自動で埋め込み用(embed)に変換する機能を付けました。
          */
         const videoDatabase = {
-            // 例1: ドライバー スライス
-            "dr-slice": {
-                title: "ドライバー スライス",
+            // ① ドライバー：スライス のデータ例
+            "driver-slice": {
+                subTitle: "ドライバー スライス",
+                description: "【即効！】手打ちを解消し、しなりを体感して驚くほど球が捕まる大ヒット練習器具はこちら👇",
+                rakutenUrl: "https://a.r10.to/hFGdgX",
                 videos: [
                     "https://www.youtube.com/watch?v=PY0jqwFw6zc",
                     "https://www.youtube.com/watch?v=Fi7p5H93tNM",
                     "https://www.youtube.com/watch?v=Bkv7GgDcKm4"
-                ],
-                rakutenUrl: "https://a.r10.to/hR5uL4"
+                ]
             },
-            // 例2: ドライバー 飛距離（次の設定用のサンプルです）
-            "dr-distance": {
-                title: "ドライバー 飛距離",
+            // ② ドライバー：飛距離（ManyChat確認用のサンプル）
+            "driver-distance": {
+                subTitle: "ドライバー 飛距離",
+                description: "【飛距離アップ！】ヘッドスピードを爆上げする話題の練習器具はこちら👇",
+                rakutenUrl: "https://www.rakuten.co.jp",
                 videos: [
                     "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
                     "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
                     "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
-                ],
-                rakutenUrl: "https://www.rakuten.co.jp"
+                ]
             }
+            // 💡 残りの35項目も、全く同じ形式でここにどんどん追加していけます！
         };
 
-        // YouTubeの通常のURLを埋め込み用(embed)の形式に変換する補助関数
+        // YouTubeの通常URLを「埋め込み用URL」に変換する関数
         function getEmbedUrl(url) {
-            if (!url) return "";
+            if(!url) return "";
             let videoId = "";
             if (url.includes("v=")) {
                 videoId = url.split("v=")[1].split("&")[0];
@@ -247,31 +268,37 @@
             return videoId ? "https://www.youtube.com/embed/" + videoId : url;
         }
 
-        // ページを読み込んだ時にパラメータを解析して中身を書き換えるロジック
+        // ManyChatからのリクエスト（?id=xxxx）を解析して画面を書き換える関数
         function loadContent() {
             const urlParams = new URLSearchParams(window.location.search);
             const id = urlParams.get('id');
 
-            // データベースに指定されたIDがある場合のみ書き換え処理を行う
+            // データベースにIDが登録されている場合のみ書き換え実行
             if (id && videoDatabase[id]) {
                 const data = videoDatabase[id];
                 
-                // 1. タイトルの変更
-                document.getElementById('page-title').textContent = data.title;
+                // 1. 小項目タイトルの書き換え
+                document.getElementById('sub-header').textContent = data.subTitle;
                 
-                // 2. 3本の動画URLを埋め込み用に変換してセット
+                // 2. 物販紹介文と楽天URLの書き換え
+                document.getElementById('item-title').innerHTML = data.description.replace(/\n/g, '<br>');
+                document.getElementById('rakuten-link').href = data.rakutenUrl;
+                
+                // 3. 3本のYouTube動画を自動変換してプレイヤーにセット
                 if (data.videos && data.videos.length >= 3) {
                     document.getElementById('video-1').src = getEmbedUrl(data.videos[0]);
                     document.getElementById('video-2').src = getEmbedUrl(data.videos[1]);
                     document.getElementById('video-3').src = getEmbedUrl(data.videos[2]);
                 }
-                
-                // 3. 楽天アフィリエイトURLの変更
-                document.getElementById('rakuten-link').href = data.rakutenUrl;
+            } else {
+                // IDがないか、見つからない場合の初期表示
+                document.getElementById('video-1').src = "https://www.youtube.com/embed/dQw4w9WgXcQ";
+                document.getElementById('video-2').src = "https://www.youtube.com/embed/dQw4w9WgXcQ";
+                document.getElementById('video-3').src = "https://www.youtube.com/embed/dQw4w9WgXcQ";
             }
         }
 
-        // 実行
+        // ページが読み込まれたら自動起動
         window.onload = loadContent;
     </script>
 
