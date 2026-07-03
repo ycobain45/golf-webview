@@ -48,17 +48,17 @@
             letter-spacing: 1px;
         }
 
-        /* 小項目タイトル表示スペース（白文字・シンプルな黒背景枠に変更） */
+        /* 小項目タイトル表示スペース（文字色を白、背景枠をシンプルに調整） */
         .sub-header {
             text-align: center;
             font-size: 16px;
             font-weight: bold;
-            color: #ffffff; /* 白字に変更 */
-            margin-bottom: 20px;
-            background-color: #1e1e1e; /* 落ち着いた黒に変更 */
+            color: #ffffff; /* 緑から白文字に変更 */
+            margin-bottom: 25px;
+            background-color: #1a1a1a;
             padding: 10px;
             border-radius: 6px;
-            border: 1px solid #333333;
+            border: 1px solid #333;
         }
 
         .section-title {
@@ -150,7 +150,7 @@
             background-color: var(--card-bg);
             border: 1px solid #333;
             border-radius: 12px;
-            padding: 16px;
+            padding: 20px 16px;
             margin-bottom: 30px;
             text-align: center;
         }
@@ -167,7 +167,7 @@
             font-size: 15px;
             font-weight: bold;
             text-decoration: none;
-            margin-top: 12px;
+            margin-top: 4px;
             box-shadow: 0 4px 15px rgba(0, 255, 135, 0.3);
         }
 
@@ -212,9 +212,8 @@
 
         <div class="section-title">▼ 近くの室内練習場を探す</div>
         <div class="ad-card">
-            <div style="font-size: 13px; color: var(--text-sub);">24時間365日いつでも完全個室で練習</div>
-            <div style="font-size: 16px; font-weight: bold; margin-top: 4px; color: var(--accent-color);">SMART GOLF（スマートゴルフ）</div>
-            <a href="https://sma-gol.com" target="_blank" class="btn btn-sub">無料体験レッスンに申し込む</a>
+            <div style="font-size: 16px; font-weight: bold; color: var(--accent-color);">SMART GOLF（スマートゴルフ）</div>
+            <a href="https://sma-gol.com" target="_blank" class="btn btn-sub">無料体験に申し込む</a>
         </div>
 
         <footer>
@@ -229,7 +228,7 @@
         const videoDatabase = {
             // ① ドライバー：スライス
             "driver-slice": {
-                subTitle: "「ドライバー スライス」", // 「」を反映
+                subTitle: "「ドライバー スライス」",
                 description: "【即効！】手打ちを解消し、しなりを体感して驚くほど球が捕まる大ヒット練習器具はこちら👇",
                 rakutenUrl: "https://a.r10.to/hFGdgX",
                 videos: [
@@ -238,9 +237,9 @@
                     "https://www.youtube.com/watch?v=Bkv7GgDcKm4"
                 ]
             },
-            // ② ドライバー：飛距離（サンプル）
+            // ② ドライバー：飛距離
             "driver-distance": {
-                subTitle: "「ドライバー 飛距離」", // 「」を反映
+                subTitle: "「ドライバー 飛距離」",
                 description: "【飛距離アップ！】ヘッドスピードを爆上げする話題の練習器具はこちら👇",
                 rakutenUrl: "https://www.rakuten.co.jp",
                 videos: [
@@ -259,4 +258,38 @@
                 videoId = url.split("v=")[1].split("&")[0];
             } else if (url.includes("youtu.be/")) {
                 videoId = url.split("youtu.be/")[1].split("?")[0];
-            } else if (url.includes("
+            } else if (url.includes("embed/")) {
+                return url;
+            }
+            return videoId ? "https://www.youtube.com/embed/" + videoId : url;
+        }
+
+        // パラメータ解析関数
+        function loadContent() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const id = urlParams.get('id');
+
+            if (id && videoDatabase[id]) {
+                const data = videoDatabase[id];
+                
+                document.getElementById('sub-header').textContent = data.subTitle;
+                document.getElementById('item-title').innerHTML = data.description.replace(/\n/g, '<br>');
+                document.getElementById('rakuten-link').href = data.rakutenUrl;
+                
+                if (data.videos && data.videos.length >= 3) {
+                    document.getElementById('video-1').src = getEmbedUrl(data.videos[0]);
+                    document.getElementById('video-2').src = getEmbedUrl(data.videos[1]);
+                    document.getElementById('video-3').src = getEmbedUrl(data.videos[2]);
+                }
+            } else {
+                document.getElementById('video-1').src = "https://www.youtube.com/embed/dQw4w9WgXcQ";
+                document.getElementById('video-2').src = "https://www.youtube.com/embed/dQw4w9WgXcQ";
+                document.getElementById('video-3').src = "https://www.youtube.com/embed/dQw4w9WgXcQ";
+            }
+        }
+
+        window.onload = loadContent;
+    </script>
+
+</body>
+</html>
