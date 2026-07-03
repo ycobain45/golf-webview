@@ -164,26 +164,22 @@
 
     <div class="container">
         <header>
-            <h1>ゴルフ神動画ライブラリ</h1>
+            <h1 id="main-header">ゴルフ神動画ライブラリ</h1>
         </header>
 
-        <!-- 動画プレイヤー（テスト用に公式のゴルフ動画を埋め込み） -->
         <div class="video-container">
-            <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" allowfullscreen></iframe>
+            <iframe id="video-player" src="https://www.youtube.com/embed/dQw4w9WgXcQ" allowfullscreen></iframe>
         </div>
 
-        <!-- 【一等地】現物物販 -->
         <div class="section-title">▼ 今売れている・上達を加速させる神ヒットギア</div>
         <div class="item-card">
-            <div class="item-title">ゴルフギア</div>
+            <div id="item-title" class="item-title">おすすめゴルフギア</div>
             <div class="btn-group">
-                <!-- テスト用ダミーURL（本番はディープリンクを挿入） -->
                 <a href="https://www.amazon.co.jp/gp/bestsellers/sports/14315441" target="_blank" class="btn btn-amazon">Amazonで見る</a>
-                <a href="https://www.rakuten.co.jp" target="_blank" class="btn btn-rakuten">楽天市場で見る</a>
+                <a id="rakuten-link" href="https://www.rakuten.co.jp" target="_blank" class="btn btn-rakuten">楽天市場で見る</a>
             </div>
         </div>
 
-        <!-- 【二等地】スマートゴルフ無料体験 -->
         <div class="section-title">▼ 近くの室内練習場を探す</div>
         <div class="ad-card">
             <div style="font-size: 13px; color: var(--text-sub);">24時間365日いつでも完全個室で練習</div>
@@ -195,6 +191,47 @@
             &copy; ゴルフ神動画ライブラリ All Rights Reserved.
         </footer>
     </div>
+
+    <script>
+        /**
+         * 【37項目 出し分けデータ管理データベース】
+         * ここに各項目のID、タイトル、YouTube動画ID、楽天URLを登録します。
+         */
+        const videoDatabase = {
+            // 例：ドライバーの「スライス」
+            "dr-slice": {
+                title: "ドライバー：スライス改善特選ギア",
+                youtubeId: "dQw4w9WgXcQ", // YouTubeの動画ID（embed/の後の文字列）
+                rakutenUrl: "https://www.rakuten.co.jp" // 対象の楽天URL
+            },
+            // 例：パターの「ショートパット」
+            "pt-short": {
+                title: "パター：ショートパット極意ギア",
+                youtubeId: "dQw4w9WgXcQ",
+                rakutenUrl: "https://www.rakuten.co.jp"
+            }
+            // ※今後ここに残りの35項目を同じ形式で追記していきます。
+        };
+
+        // URLパラメータ（?id=xxxx）を取得するプログラム
+        function loadContent() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const id = urlParams.get('id');
+
+            // データベースにIDが存在する場合、中身を自動で書き換える
+            if (id && videoDatabase[id]) {
+                const data = videoDatabase[id];
+                
+                // タイトル、動画URL、楽天URLの書き換え
+                document.getElementById('item-title').textContent = data.title;
+                document.getElementById('video-player').src = "https://www.youtube.com/embed/" + data.youtubeId;
+                document.getElementById('rakuten-link').href = data.rakutenUrl;
+            }
+        }
+
+        // ページ読み込み時に実行
+        window.onload = loadContent;
+    </script>
 
 </body>
 </html>
