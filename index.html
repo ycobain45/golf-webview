@@ -39,7 +39,7 @@
             text-align: center;
             padding: 12px 0;
             border-bottom: 1px solid #333;
-            margin-bottom: 15px;
+            margin-bottom: 16px;
         }
 
         header h1 {
@@ -50,16 +50,23 @@
             font-weight: normal;
         }
 
-        /* 小項目タイトル（一等地の上にドンと表示） */
+        /* 小項目タイトル（一等地の上に配置） */
         .sub-title {
-            font-size: 24px;
+            font-size: 22px;
             font-weight: bold;
-            text-align: center;
-            color: var(--text-color);
-            margin: 10px 0 20px 0;
+            color: #ffffff;
+            margin: 8px 0 0 0;
+            letter-spacing: 0.5px;
         }
 
         /* 16:9 動画プレイヤー枠 */
+        .video-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
         .video-container {
             position: relative;
             width: 100%;
@@ -68,7 +75,6 @@
             border-radius: 12px;
             overflow: hidden;
             box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-            margin-bottom: 15px; /* 動画同士の隙間 */
         }
 
         .video-container iframe {
@@ -81,11 +87,12 @@
         }
 
         .section-title {
-            font-size: 14px;
+            font-size: 13px;
             color: var(--text-sub);
-            margin: 25px 0 10px 0;
+            margin-bottom: 10px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            font-weight: bold;
         }
 
         /* 一等地：現物物販カード */
@@ -100,7 +107,7 @@
         .btn-group {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 10px;
+            gap: 12px;
         }
 
         .btn {
@@ -169,11 +176,10 @@
     <div class="container">
         <header>
             <h1>ゴルフ神動画ライブラリ</h1>
+            <div id="page-title" class="sub-title">おすすめ動画</div>
         </header>
 
-        <div id="page-title" class="sub-title">おすすめ神動画</div>
-
-        <div id="video-area">
+        <div class="video-list">
             <div class="video-container"><iframe id="video-1" src="" allowfullscreen></iframe></div>
             <div class="video-container"><iframe id="video-2" src="" allowfullscreen></iframe></div>
             <div class="video-container"><iframe id="video-3" src="" allowfullscreen></iframe></div>
@@ -201,53 +207,71 @@
 
     <script>
         /**
-         * 【37項目 出し分けデータ管理データベース】
-         * ここに ManyChat 用のIDと、それに紐づくデータを追加していきます。
+         * 【37項目 出し分けデータデータベース】
+         * ManyChatで指定するIDと、表示したいデータをここに並べていきます。
          */
         const videoDatabase = {
-            // ドライバー：スライス
-            "driver-slice": {
+            // 例1: ドライバー スライス
+            "dr-slice": {
                 title: "ドライバー スライス",
-                // watch?v= の後ろにある11文字の動画IDを3本指定
-                youtubeIds: [
-                    "PY0jqwFw6zc",
-                    "Fi7p5H93tNM",
-                    "Bkv7GgDcKm4"
+                videos: [
+                    "https://www.youtube.com/watch?v=PY0jqwFw6zc",
+                    "https://www.youtube.com/watch?v=Fi7p5H93tNM",
+                    "https://www.youtube.com/watch?v=Bkv7GgDcKm4"
                 ],
                 rakutenUrl: "https://a.r10.to/hR5uL4"
+            },
+            // 例2: ドライバー 飛距離（次の設定用のサンプルです）
+            "dr-distance": {
+                title: "ドライバー 飛距離",
+                videos: [
+                    "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+                    "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+                    "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+                ],
+                rakutenUrl: "https://www.rakuten.co.jp"
             }
-            // ※残りの36項目もここに同じ形式で追加していきます！
         };
 
-        // URLパラメータ（?id=xxxx）を読み取って画面を書き換えるプログラム
+        // YouTubeの通常のURLを埋め込み用(embed)の形式に変換する補助関数
+        function getEmbedUrl(url) {
+            if (!url) return "";
+            let videoId = "";
+            if (url.includes("v=")) {
+                videoId = url.split("v=")[1].split("&")[0];
+            } else if (url.includes("youtu.be/")) {
+                videoId = url.split("youtu.be/")[1].split("?")[0];
+            } else if (url.includes("embed/")) {
+                return url;
+            }
+            return videoId ? "https://www.youtube.com/embed/" + videoId : url;
+        }
+
+        // ページを読み込んだ時にパラメータを解析して中身を書き換えるロジック
         function loadContent() {
             const urlParams = new URLSearchParams(window.location.search);
             const id = urlParams.get('id');
 
-            // データベースにIDが存在する場合
+            // データベースに指定されたIDがある場合のみ書き換え処理を行う
             if (id && videoDatabase[id]) {
                 const data = videoDatabase[id];
                 
-                // タイトルと楽天URLを書き換え
+                // 1. タイトルの変更
                 document.getElementById('page-title').textContent = data.title;
-                document.getElementById('rakuten-link').href = data.rakutenUrl;
                 
-                // 3本の動画プレイヤーにURLをセット
-                document.getElementById('video-1').src = "https://www.youtube.com/embed/" + data.youtubeIds[0];
-                document.getElementById('video-2').src = "https://www.youtube.com/embed/" + data.youtubeIds[1];
-                document.getElementById('video-3').src = "https://www.youtube.com/embed/" + data.youtubeIds[2];
-            } else {
-                // IDが未指定、またはエラー時のデフォルト表示（例としてスライスを表示）
-                const defaultData = videoDatabase["driver-slice"];
-                document.getElementById('page-title').textContent = defaultData.title;
-                document.getElementById('rakuten-link').href = defaultData.rakutenUrl;
-                document.getElementById('video-1').src = "https://www.youtube.com/embed/" + defaultData.youtubeIds[0];
-                document.getElementById('video-2').src = "https://www.youtube.com/embed/" + defaultData.youtubeIds[1];
-                document.getElementById('video-3').src = "https://www.youtube.com/embed/" + defaultData.youtubeIds[2];
+                // 2. 3本の動画URLを埋め込み用に変換してセット
+                if (data.videos && data.videos.length >= 3) {
+                    document.getElementById('video-1').src = getEmbedUrl(data.videos[0]);
+                    document.getElementById('video-2').src = getEmbedUrl(data.videos[1]);
+                    document.getElementById('video-3').src = getEmbedUrl(data.videos[2]);
+                }
+                
+                // 3. 楽天アフィリエイトURLの変更
+                document.getElementById('rakuten-link').href = data.rakutenUrl;
             }
         }
 
-        // ページ読み込み時に実行
+        // 実行
         window.onload = loadContent;
     </script>
 
