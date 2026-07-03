@@ -48,12 +48,12 @@
             letter-spacing: 1px;
         }
 
-        /* 小項目タイトル表示スペース（文字色を白、背景枠をシンプルに調整） */
+        /* 小項目タイトル表示スペース */
         .sub-header {
             text-align: center;
             font-size: 16px;
             font-weight: bold;
-            color: #ffffff; /* 緑から白文字に変更 */
+            color: #ffffff; /* 白文字 */
             margin-bottom: 25px;
             background-color: #1a1a1a;
             padding: 10px;
@@ -187,26 +187,26 @@
             <h1>ゴルフ神動画ライブラリ</h1>
         </header>
 
-        <div id="sub-header" class="sub-header">「おすすめ神動画」</div>
+        <div id="sub-header" class="sub-header">「ドライバー スライス」</div>
 
         <div class="video-list">
             <div class="video-container">
-                <iframe id="video-1" src="" allowfullscreen></iframe>
+                <iframe id="video-1" src="https://www.youtube.com/embed/PY0jqwFw6zc" allowfullscreen></iframe>
             </div>
             <div class="video-container">
-                <iframe id="video-2" src="" allowfullscreen></iframe>
+                <iframe id="video-2" src="https://www.youtube.com/embed/Fi7p5H93tNM" allowfullscreen></iframe>
             </div>
             <div class="video-container">
-                <iframe id="video-3" src="" allowfullscreen></iframe>
+                <iframe id="video-3" src="https://www.youtube.com/embed/Bkv7GgDcKm4" allowfullscreen></iframe>
             </div>
         </div>
 
         <div class="section-title">▼ 今売れている・上達を加速させる神ヒットギア</div>
         <div class="item-card">
-            <div id="item-title" class="item-title">おすすめゴルフギアの詳細はこちら</div>
+            <div id="item-title" class="item-title">【即効！】手打ちを解消し、しなりを体感して驚くほど球が捕まる大ヒット練習器具はこちら👇</div>
             <div class="btn-group">
                 <a href="https://www.amazon.co.jp/gp/bestsellers/sports/14315441" target="_blank" class="btn btn-amazon">Amazonで見る</a>
-                <a id="rakuten-link" href="https://www.rakuten.co.jp" target="_blank" class="btn btn-rakuten">楽天市場で見る</a>
+                <a id="rakuten-link" href="https://a.r10.to/hFGdgX" target="_blank" class="btn btn-rakuten">楽天市場で見る</a>
             </div>
         </div>
 
@@ -226,7 +226,6 @@
          * ⛳️【37項目マスターデータベース】
          */
         const videoDatabase = {
-            // ① ドライバー：スライス
             "driver-slice": {
                 subTitle: "「ドライバー スライス」",
                 description: "【即効！】手打ちを解消し、しなりを体感して驚くほど球が捕まる大ヒット練習器具はこちら👇",
@@ -237,7 +236,6 @@
                     "https://www.youtube.com/watch?v=Bkv7GgDcKm4"
                 ]
             },
-            // ② ドライバー：飛距離
             "driver-distance": {
                 subTitle: "「ドライバー 飛距離」",
                 description: "【飛距離アップ！】ヘッドスピードを爆上げする話題の練習器具はこちら👇",
@@ -269,9 +267,9 @@
             const urlParams = new URLSearchParams(window.location.search);
             const id = urlParams.get('id');
 
+            // IDが指定されている場合のみデータベースから読み込む
             if (id && videoDatabase[id]) {
                 const data = videoDatabase[id];
-                
                 document.getElementById('sub-header').textContent = data.subTitle;
                 document.getElementById('item-title').innerHTML = data.description.replace(/\n/g, '<br>');
                 document.getElementById('rakuten-link').href = data.rakutenUrl;
@@ -281,10 +279,6 @@
                     document.getElementById('video-2').src = getEmbedUrl(data.videos[1]);
                     document.getElementById('video-3').src = getEmbedUrl(data.videos[2]);
                 }
-            } else {
-                document.getElementById('video-1').src = "https://www.youtube.com/embed/dQw4w9WgXcQ";
-                document.getElementById('video-2').src = "https://www.youtube.com/embed/dQw4w9WgXcQ";
-                document.getElementById('video-3').src = "https://www.youtube.com/embed/dQw4w9WgXcQ";
             }
         }
 
