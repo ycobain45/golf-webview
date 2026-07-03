@@ -187,26 +187,26 @@
             <h1>ゴルフ神動画ライブラリ</h1>
         </header>
 
-        <div id="sub-header" class="sub-header">「ドライバー スライス」</div>
+        <div id="sub-header" class="sub-header">「おすすめ神動画」</div>
 
         <div class="video-list">
             <div class="video-container">
-                <iframe id="video-1" src="https://www.youtube.com/embed/PY0jqwFw6zc" allowfullscreen></iframe>
+                <iframe id="video-1" src="" allowfullscreen></iframe>
             </div>
             <div class="video-container">
-                <iframe id="video-2" src="https://www.youtube.com/embed/Fi7p5H93tNM" allowfullscreen></iframe>
+                <iframe id="video-2" src="" allowfullscreen></iframe>
             </div>
             <div class="video-container">
-                <iframe id="video-3" src="https://www.youtube.com/embed/Bkv7GgDcKm4" allowfullscreen></iframe>
+                <iframe id="video-3" src="" allowfullscreen></iframe>
             </div>
         </div>
 
         <div class="section-title">▼ 今売れている・上達を加速させる神ヒットギア</div>
         <div class="item-card">
-            <div id="item-title" class="item-title">【即効！】手打ちを解消し、しなりを体感して驚くほど球が捕まる大ヒット練習器具はこちら👇</div>
+            <div id="item-title" class="item-title">おすすめゴルフギアの詳細はこちら</div>
             <div class="btn-group">
-                <a href="https://www.amazon.co.jp/gp/bestsellers/sports/14315441" target="_blank" class="btn btn-amazon">Amazonで見る</a>
-                <a id="rakuten-link" href="https://a.r10.to/hFGdgX" target="_blank" class="btn btn-rakuten">楽天市場で見る</a>
+                <a id="amazon-link" href="https://www.amazon.co.jp/gp/bestsellers/sports/14315441" target="_blank" class="btn btn-amazon">Amazonで見る</a>
+                <a id="rakuten-link" href="https://www.rakuten.co.jp" target="_blank" class="btn btn-rakuten">楽天市場で見る</a>
             </div>
         </div>
 
@@ -222,13 +222,17 @@
     </div>
 
     <script>
+        // デフォルトのAmazonランキングURL
+        const defaultAmazon = "https://www.amazon.co.jp/gp/bestsellers/sports/14315441";
+
         /**
-         * ⛳️【37項目マスターデータベース】
+         * ⛳️【37項目マスターデータベース（No.1 〜 No.10分）】
          */
         const videoDatabase = {
-            "driver-slice": {
+            "1": {
                 subTitle: "「ドライバー スライス」",
                 description: "【即効！】手打ちを解消し、しなりを体感して驚くほど球が捕まる大ヒット練習器具はこちら👇",
+                amazonUrl: "https://www.amazon.co.jp/%E3%80%90%E4%BB%8A%E5%B9%B3%E5%91%A8%E5%90%BE%E3%83%97%E3%83%AD%E6%8E%A8%E5%A5%A8%E3%80%91%E3%83%80%E3%82%A4%E3%83%A4%E3%82%B4%E3%83%AB%E3%83%95-DAIYA-GOLF-%E3%82%A2%E3%83%BC%E3%83%A0%E3%82%AD%E3%83%BC%E3%83%91%E3%83%BC%E4%B8%89%E8%A7%92-TR-5011/dp/B0CY24LJD9/",
                 rakutenUrl: "https://a.r10.to/hFGdgX",
                 videos: [
                     "https://www.youtube.com/watch?v=PY0jqwFw6zc",
@@ -236,14 +240,103 @@
                     "https://www.youtube.com/watch?v=Bkv7GgDcKm4"
                 ]
             },
-            "driver-distance": {
-                subTitle: "「ドライバー 飛距離」",
-                description: "【飛距離アップ！】ヘッドスピードを爆上げする話題の練習器具はこちら👇",
-                rakutenUrl: "https://www.rakuten.co.jp",
+            "2": {
+                subTitle: "「ドライバー 脱力」",
+                description: "【力みゼロへ！】設定したヘッドスピードでカチッと音が鳴る！脱力して最速で振る感覚が身につく大ヒット練習器具はこちら👇",
+                amazonUrl: "https://www.amazon.co.jp/%E3%83%80%E3%82%A4%E3%83%A4%E3%82%B4%E3%83%AB%E3%83%95-DAIYA-GOLF-%E3%83%80%E3%82%A4%E3%83%A4%E3%82%B9%E3%82%A4%E3%83%B3%E3%82%B0VS-TR-5008/dp/B0BZP7Z38X/ref=sr_1_1?__mk_ja_JP=%E3%82%AB%E3%82%BF%E3%82%AB%E3%83%8A&dib=eyJ2IjoiMSJ9.tndyEZyV3fTauE-CXaWy1BI8DX-didPHz-TbeTta8RboEgSTjeGW16PZQITD_OApjAtVdGX4l3WerhYZoKvroRoy3_wNKMvR6fuTLbNSnsfaU3m7fuc2je2CuC7qxxoaJ5i2U2ZCbzSDEG-5_CPcUBEBXVe3DCfQbjHSCAI5PnVBaZQMnzns63G8Z9nQFH2DGLrF592Rf5StWvoEfUyC5xiAUXx78OSLBW5szE6KGVIVJmlVMu4HxNcbNWOOo0JMZXWi88PbXRdUuSH2yr_W6okYtUPiEWl6ae6dYporvB0.gCLl3lFOMTxVrK_v2G4I2DYLVdRjiZvkxltnSW6f9B4&dib_tag=se&keywords=%E3%83%80%E3%82%A4%E3%83%A4%2B%E3%83%80%E3%82%A4%E3%83%A4%E3%82%B9%E3%82%A4%E3%83%B3%E3%82%B0VS%2BTR-5008%2BDAIYA%2BGOLF%2B%E3%82%B4%E3%83%AB%E3%83%95&qid=1783091893&s=sports&sr=1-1&th=1",
+                rakutenUrl: "https://a.r10.to/hF4AcX",
                 videos: [
-                    "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-                    "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-                    "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+                    "https://www.youtube.com/watch?v=c-TUQAsOsIM",
+                    "https://www.youtube.com/watch?v=aLkp57G56sA",
+                    "https://www.youtube.com/watch?v=aNsyCRPbmfE&t=269s"
+                ]
+            },
+            "3": {
+                subTitle: "「ドライバー 飛距離」",
+                description: "【マン飛び！】設定したヘッドスピードでカチッと音が鳴る！限界突破の飛距離と理想のしなりを手に入れる大ヒット練習器具はこちら👇",
+                amazonUrl: "https://www.amazon.co.jp/%E3%83%80%E3%82%A4%E3%83%A4%E3%82%B4%E3%83%AB%E3%83%95-DAIYA-GOLF-%E3%83%80%E3%82%A4%E3%83%A4%E3%82%B9%E3%82%A4%E3%83%B3%E3%82%B0VS-TR-5008/dp/B0BZP7Z38X/ref=sr_1_1?__mk_ja_JP=%E3%82%AB%E3%82%BF%E3%82%AB%E3%83%8A&dib=eyJ2IjoiMSJ9.tndyEZyV3fTauE-CXaWy1BI8DX-didPHz-TbeTta8RboEgSTjeGW16PZQITD_OApjAtVdGX4l3WerhYZoKvroRoy3_wNKMvR6fuTLbNSnsfaU3m7fuc2je2CuC7qxxoaJ5i2U2ZCbzSDEG-5_CPcUBEBXVe3DCfQbjHSCAI5PnVBaZQMnzns63G8Z9nQFH2DGLrF592Rf5StWvoEfUyC5xiAUXx78OSLBW5szE6KGVIVJmlVMu4HxNcbNWOOo0JMZXWi88PbXRdUuSH2yr_W6okYtUPiEWl6ae6dYporvB0.gCLl3lFOMTxVrK_v2G4I2DYLVdRjiZvkxltnSW6f9B4&dib_tag=se&keywords=%E3%83%80%E3%82%A4%E3%83%A4%2B%E3%83%80%E3%82%A4%E3%83%A4%E3%82%B9%E3%82%A4%E3%83%B3%E3%82%B0VS%2BTR-5008%2BDAIYA%2BGOLF%2B%E3%82%B4%E3%83%AB%E3%83%95&qid=1783091893&s=sports&sr=1-1&th=1",
+                rakutenUrl: "https://a.r10.to/hF4AcX",
+                videos: [
+                    "https://www.youtube.com/watch?v=jkJUDZAqKvU",
+                    "https://www.youtube.com/watch?v=KpIfxu_yizc",
+                    "https://www.youtube.com/watch?v=Sr3aNDxLzrg"
+                ]
+            },
+            "4": {
+                subTitle: "「ドライバー ミート率」",
+                description: "【芯喰い！】フェースのどこに当たったか一発で分かる！ミート率を爆上げして真芯を捉える大ヒット判定シールはこちら👇",
+                amazonUrl: "https://www.amazon.co.jp/%E3%83%80%E3%82%A4%E3%83%A4-DAIYA-%E3%82%B7%E3%83%A7%E3%83%83%E3%83%88%E4%BD%8D%E7%BD%AE%E7%A2%BA%E8%AA%8D%E3%82%B0%E3%83%83%E3%82%BA-%E3%82%A4%E3%83%B3%E3%83%91%E3%82%AF%E3%83%88%E3%83%9E%E3%83%BC%E3%82%AB%E3%83%BC-AS-910/dp/B079VQLPQP/ref=sr_1_1_mod_primary_new?__mk_ja_JP=%E3%82%AB%E3%82%BF%E3%82%AB%E3%83%8A&crid=GX9GUY3ZRR92&dib=eyJ2IjoiMSJ9.cmtr9ARd7EsD_eOeQrHd3CDWdVqZnxtmiQXxWZuynckEYKM24GMov06hYZQaq6iIdYrWlxwLaOHvwoovEnTKohmCLWfLLhLa7sElJXBQIMzP6ZcGrxk6mHz71GI3OR2omyGwhIZoKvT-_ee5jbDz2UBwAM82iwV5xvVNHwqrnxxuwQ4P_cyBP1gemz7_HwqLRVAP8wznBi8f-LjdwhbGNTUt66TORTiXbQswOuJXMqwU72oYHjvaSVINi1IlryYzlB-QrjezqziQKhDsEw3iZYN4oJghZ0XSHdMu6LpYwIg.dWR-ZtLJgZD_R50FTzZaxs_wTuMCLMTjITHnrazVD_k&dib_tag=se&keywords=%E3%83%80%E3%82%A4%E3%83%A4%E3%82%B4%E3%83%AB%E3%83%95+%E3%81%8A%E5%BE%97%E3%81%AA100%E3%82%B7%E3%83%A7%E3%83%83%E3%83%88%E5%88%86%E3%83%91%E3%83%83%E3%82%AF+%7C+%E3%82%B7%E3%83%A7%E3%83%83%E3%83%88%E7%A2%BA%E8%AA%8D%E3%82%B7%E3%83%BC%E3%83%88&qid=1783092519&sbo=RZvfv%2F%2FHxDF%2BO5021pAnSA%3D%3D&sprefix=%E3%83%80%E3%82%A4%E3%83%A4%E3%82%B4%E3%83%AB%E3%83%95+%E3%81%8A%E5%BE%97%E3%81%AA100%E3%82%B7%E3%83%A7%E3%83%83%E3%83%88%E5%88%86%E3%83%91%E3%83%83%E3%82%AF+%E3%82%B7%E3%83%A7%E3%83%83%E3%83%88%E7%A2%BA%E8%AA%8D%E3%82%B7%E3%83%BC%E3%83%88%2Caps%2C440&sr=8-1",
+                rakutenUrl: "https://a.r10.to/h5vZJy",
+                videos: [
+                    "https://www.youtube.com/watch?v=L2wZ8I6bI-c",
+                    "https://www.youtube.com/watch?v=LqF0ZBy4B8A",
+                    "https://www.youtube.com/watch?v=9_0X9W_kZsc"
+                ]
+            },
+            "5": {
+                subTitle: "「ドライバー 選び方」",
+                description: "【注目】「ミスに一番強い」と今ネットで圧倒的に売れている最新ドライバーのスペック確認はこちら👇",
+                amazonUrl: "https://www.amazon.co.jp/s?k=TAYLORMADE+QI35+MAX&__mk_ja_JP=%E3%82%AB%E3%82%BF%E3%82%AB%E3%83%8A&crid=27BZ7A9DO497B&sprefix=taylormade+qi35+max%2Caps%2C330&ref=nb_sb_noss_1",
+                rakutenUrl: "https://a.r10.to/hPniyR",
+                videos: [
+                    "https://www.youtube.com/watch?v=XNmQtmOaft4",
+                    "https://www.youtube.com/watch?v=e-3o7OE5S5k",
+                    "https://www.youtube.com/watch?v=mOqnOq2loNw"
+                ]
+            },
+            "6": {
+                subTitle: "「ドライバー 比較」",
+                description: "【ダフリ撲滅！】最下点でカチッと音が鳴る！すくい打ちを直してフェFWが芯に当たる大ヒット練習器具はこちら👇",
+                amazonUrl: "https://www.amazon.co.jp/gp/bestsellers/sports/15314331",
+                rakutenUrl: "https://a.r10.to/h5SFd4",
+                videos: [
+                    "https://www.youtube.com/watch?v=mZqP0k8uR6M",
+                    "https://www.youtube.com/watch?v=kS4Pz4jZ-tM",
+                    "https://www.youtube.com/watch?v=7_hN9b1P6P0"
+                ]
+            },
+            "7": {
+                subTitle: "「FW 苦手」",
+                description: "【芝の上からでも球が上がる】フェアウェイウッドの苦手意識を払拭し、2打目を最強の武器にするお助け練習器具はこちら👇",
+                amazonUrl: "amazon.co.jp/ダイヤゴルフ-DAIYA-GOLF-ダイヤスイングVS-TR-5008/dp/B0BZP7Z38X/ref=sr_1_2?__mk_ja_JP=カタカナ&crid=2IMC7MQ7PPXUO&dib=eyJ2IjoiMSJ9.tndyEZyV3fTauE-CXaWy1BI8DX-didPHz-TbeTta8RboEgSTjeGW16PZQITD_OApjAtVdGX4l3WerhYZoKvroRoy3_wNKMvR6fuTLbNSnsfaU3m7fuc2je2CuC7qxxoaJ5i2U2ZCbzSDEG-5_CPcUBEBXVe3DCfQbjHSCAI5PnVBaZQMnzns63G8Z9nQFH2DGLrF592Rf5StWvoEfUyC5xiAUXx78OSLBW5szE6KGVIVJmlVMu4HxNcbNWOOo0JMZXWi88PbXRdUuSH2yr_W6okYtUPiEWl6ae6dYporvB0.gCLl3lFOMTxVrK_v2G4I2DYLVdRjiZvkxltnSW6f9B4&dib_tag=se&keywords=ダイヤ+ダイヤスイングVS+TR-5008+DAIYA+GOLF+ゴルフ&qid=1783093298&s=sports&sprefix=ダイヤ+ダイヤスイングvs+tr-5008+daiya+golf+ゴルフ%2Csporting%2C336&sr=1-2",
+                rakutenUrl: "https://a.r10.to/hF4AcX",
+                videos: [
+                    "https://www.youtube.com/watch?v=0nsqHRumO7E&t=100s",
+                    "https://www.youtube.com/watch?v=-98jhZvueEQ",
+                    "https://www.youtube.com/watch?v=b8nH3jPOCrI"
+                ]
+            },
+            "8": {
+                subTitle: "「UT 打ち方」",
+                description: "【必見】「アイアン感覚で優しく上がって飛ぶ」と今ネットで一番売れている最新UTのスペック確認はこちら👇",
+                amazonUrl: "https://www.amazon.co.jp/%E3%83%80%E3%82%A4%E3%83%A4%E3%82%B4%E3%83%AB%E3%83%95-DAIYA-GOLF-%E3%83%80%E3%82%A4%E3%83%A4%E3%82%B9%E3%82%A4%E3%83%B3%E3%82%B0VS-TR-5008/dp/B0BZP7Z38X/ref=sr_1_1?__mk_ja_JP=%E3%82%AB%E3%82%BF%E3%82%AB%E3%83%8A&dib=eyJ2IjoiMSJ9.tndyEZyV3fTauE-CXaWy1BI8DX-didPHz-TbeTta8RboEgSTjeGW16PZQITD_OApjAtVdGX4l3WerhYZoKvroRoy3_wNKMvR6fuTLbNSnsfaU3m7fuc2je2CuC7qxxoaJ5i2U2ZCbzSDEG-5_CPcUBEBXVe3DCfQbjHSCAI5PnVBaZQMnzns63G8Z9nQFH2DGLrF592Rf5StWvoEfUyC5xiAUXx78OSLBW5szE6KGVIVJmlVMu4HxNcbNWOOo0JMZXWi88PbXRdUuSH2yr_W6okYtUPiEWl6ae6dYporvB0.gCLl3lFOMTxVrK_v2G4I2DYLVdRjiZvkxltnSW6f9B4&dib_tag=se&keywords=%E3%83%80%E3%82%A4%E3%83%A4%2B%E3%83%80%E3%82%A4%E3%83%A4%E3%82%B9%E3%82%A4%E3%83%B3%E3%82%B0VS%2BTR-5008%2BDAIYA%2BGOLF%2B%E3%82%B4%E3%83%AB%E3%83%95&qid=1783091893&s=sports&sr=1-1&th=1",
+                rakutenUrl: "https://a.r10.to/hPkRNo",
+                videos: [
+                    "https://www.youtube.com/watch?v=SyedSnMbbKU",
+                    "https://www.youtube.com/watch?v=E9B217Mk3g8",
+                    "https://www.youtube.com/watch?v=QiTFXLG9P-w"
+                ]
+            },
+            "9": {
+                subTitle: "「FWとUTどっち？」",
+                description: "【戦略！】ハザードやグリーンまでの正確な距離を一瞬で測定！どっちを持つべきか迷わなくなる大ヒットレーザー距離計はこちら👇",
+                amazonUrl: "https://www.amazon.co.jp/EENOUR-%E3%82%B4%E3%83%AB%E3%83%95%E3%83%AC%E3%83%BC%E3%82%B6%E3%83%BC%E8%B7%9D%E9%9B%A2%E8%A8%88-U800-%E6%9C%80%E9%80%9F0-04S%E6%B8%AC%E5%AE%9A-874yd%E5%AF%BE%E5%BF%9C/dp/B0DFH1M2BL/ref=sr_1_8?__mk_ja_JP=%E3%82%AB%E3%82%BF%E3%82%AB%E3%83%8A&crid=DQ9CK4DD6ZJX&dib=eyJ2IjoiMSJ9.fJe8d_KRuR7d-VXeXOLydou4ShBo-XPyN-iZ3sTWEKi4uY2q3Rf7rjUUSJROdyf3U-nzuDvls9QOEjgRD2UxLGLgaFZIK8_ceqQhDzCyYLFmq-oVAXRKZuXX6y44lyDEWUatqIRlYNuLxBi2rEsHu6rXrsJ-01rgUJb9XFxg46q6EUeKpo7fgej8wOsJcGOZNH9nAysdiVxVuBXybndntAbObwgKyJhWgs_8SD1LLiDjbxjJSkNgw4_LN7In8pcSQG8mn_WCLYXziF7rag9TUfXGeU3qvTRO_vBW5hU0mIs.X5W5RALJvnorXK92eX7xx3YwXyHrnU5y2758m84muQ8&dib_tag=se&keywords=EENOUR+%E3%82%A4%E3%83%BC%E3%83%8E%E3%82%A6+%E3%82%B4%E3%83%AB%E3%83%95%E3%83%AC%E3%83%BC%E3%82%B6%E3%83%BC%E8%B7%9D%E9%9B%A2%E8%A8%88+3%E7%82%B9%E9%96%93%E6%B8%AC%E5%AE%9A&qid=1783094450&s=sports&sprefix=eenour+%E3%82%A4%E3%83%BC%E3%83%8E%E3%82%A6+%E3%82%B4%E3%83%AB%E3%83%95%E3%83%AC%E3%83%BC%E3%82%B6%E3%83%BC%E8%B7%9D%E9%9B%A2%E8%A8%88+3%E7%82%B9%E9%96%93%E6%B8%AC%E5%AE%9A%2Csporting%2C2085&sr=1-8",
+                rakutenUrl: "https://a.r10.to/h5BEHc",
+                videos: [
+                    "https://www.youtube.com/watch?v=Rl1TbUDBWhA",
+                    "https://www.youtube.com/watch?v=91ZtwfF_l1g&t=10s",
+                    "https://www.youtube.com/watch?v=byh8qeaSPJg"
+                ]
+            },
+            "10": {
+                subTitle: "「UT 比較・選び方」",
+                description: "【比較】今ネットでリアルタイムに一番売れているUTの人気ランキングはこちら👇",
+                amazonUrl: "https://www.amazon.co.jp/%E3%83%80%E3%82%A6%E3%83%B3%E3%83%96%E3%83%AD%E3%83%BC%E3%83%9E%E3%82%B9%E3%82%BF%E3%83%BC-%E3%80%90%E9%9D%92%E5%B1%B1%E5%8A%A0%E7%B9%94%E3%83%97%E3%83%AD%E7%9B%A3%E4%BF%AE%E3%80%91-Down-blow-Master/dp/B0CB86LWJF/ref=sr_1_1_sspa?__mk_ja_JP=%E3%82%AB%E3%82%BF%E3%82%AB%E3%83%8A&crid=2NHIDTD3VARJE&dib=eyJ2IjoiMSJ9.bJfbdEPYOQsvhZdXorcSm5NulZ5dmRxrXX7G5kBhkct15cq6m2rzbpRkBktYFKjEAEsFCSdMaQR9zc21YMUWqfJhnhNIw1Fd0JMU_lgDHhee4ShCPo-KnmUtu0X1Qxz-PXnxNwJw7nWxT0C-Qa7JgOzyjL3lIl1SVUyv7o-NEyzlWV_X86E0FrZYrg1Suj_uwE-JYSF3XLwfqgAhFbl22hpOx4FJfwCc6TZua8OIZxGXbRNmK0CGeQE7SCdwh_M-YiXpfMTwkqeoopsGJPsCYOw1JRjRLtQtHHqBeiAIb9I.JDphGt-jh3tLFmewLVHj2OZesmSzl00tyfhGTuvnXis&dib_tag=se&keywords=EENOUR+Down+blow+Master+%E9%9D%92%E5%B1%B1%E5%8A%A0%E7%B9%94%E3%83%97%E3%83%AD%E7%9B%A3%E4%BF%AE+%E3%83%80%E3%82%A6%E3%83%B3%E3%83%96%E3%83%AD%E3%83%BC%E3%83%9E%E3%82%B9%E3%82%BF%E3%83%BC+GOLFavo+%E3%82%B4%E3%83%AB%E3%83%95%E3%82%A1%E3%83%9C%E3%82%B4%E3%83%AB%E3%83%95%E3%83%AC%E3%83%BC%E3%82%B6%E3%83%BC%E8%B7%9D%E9%9B%A2%E8%A8%88+3%E7%82%B9%E9%96%93%E6%B8%AC%E5%AE%9A&qid=1783094327&s=sports&sprefix=eenour+down+blow+master+%E9%9D%92%E5%B1%B1%E5%8A%A0%E7%B9%94%E3%83%97%E3%83%AD%E7%9B%A3%E4%BF%AE+%E3%83%80%E3%82%A6%E3%83%B3%E3%83%96%E3%83%AD%E3%83%BC%E3%83%9E%E3%82%B9%E3%82%BF%E3%83%BC+golfavo+%E3%82%B4%E3%83%AB%E3%83%95%E3%82%A1%E3%83%9C%E3%82%B4%E3%83%AB%E3%83%95%E3%83%AC%E3%83%BC%E3%82%B6%E3%83%BC%E8%B7%9D%E9%9B%A2%E8%A8%88+3%E7%82%B9%E9%96%93%E6%B8%AC%E5%AE%9A%2Csporting%2C3067&sr=1-1-spons&sp_csd=d2lkZ2V0TmFtZT1zcF9hdGY&psc=1",
+                rakutenUrl: "https://a.r10.to/hgZyj2",
+                videos: [
+                    "https://www.youtube.com/watch?v=6K_0mPKRDBc",
+                    "https://www.youtube.com/watch?v=pVIqe5wtCZA",
+                    "https://www.youtube.com/watch?v=70YHkdhG5HQ"
                 ]
             }
         };
@@ -262,18 +355,22 @@
             return videoId ? "https://www.youtube.com/embed/" + videoId : url;
         }
 
-        // パラメータ解析関数
+        // パラメータ解析・コンテンツ表示関数
         function loadContent() {
             const urlParams = new URLSearchParams(window.location.search);
-            const id = urlParams.get('id');
+            // ManyChatから渡されるパラメータ。指定がない場合はデフォルトで "1" (ドライバー スライス)を表示
+            const id = urlParams.get('id') || "1";
 
-            // IDが指定されている場合のみデータベースから読み込む
-            if (id && videoDatabase[id]) {
+            if (videoDatabase[id]) {
                 const data = videoDatabase[id];
+                
+                // タイトル・紹介文・各リンクの更新
                 document.getElementById('sub-header').textContent = data.subTitle;
                 document.getElementById('item-title').innerHTML = data.description.replace(/\n/g, '<br>');
+                document.getElementById('amazon-link').href = data.amazonUrl || defaultAmazon;
                 document.getElementById('rakuten-link').href = data.rakutenUrl;
                 
+                // 3本の動画をセット
                 if (data.videos && data.videos.length >= 3) {
                     document.getElementById('video-1').src = getEmbedUrl(data.videos[0]);
                     document.getElementById('video-2').src = getEmbedUrl(data.videos[1]);
