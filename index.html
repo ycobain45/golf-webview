@@ -109,13 +109,13 @@
             font-size: 14px;
             font-weight: bold;
             margin-bottom: 12px;
-            line-height: 1.4;
+            line-height: 1.5;
+            color: #ffffff;
         }
 
-        /* アフィリエイトボタン */
-        .btn-container {
-            display: flex;
-            flex-direction: column;
+        .btn-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr; /* ボタン横並び */
             gap: 10px;
         }
 
@@ -123,14 +123,11 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
-            width: 100%;
-            padding: 14px;
-            font-size: 15px;
-            font-weight: bold;
+            height: 48px;
             border-radius: 8px;
+            font-size: 14px;
+            font-weight: bold;
             text-decoration: none;
-            box-sizing: border-box;
             transition: opacity 0.2s;
         }
 
@@ -148,16 +145,38 @@
             color: #ffffff;
         }
 
-        .btn i {
-            font-size: 16px;
+        /* 二等地：スマートゴルフ */
+        .ad-card {
+            background-color: var(--card-bg);
+            border: 1px solid #333;
+            border-radius: 12px;
+            padding: 20px 16px;
+            margin-bottom: 30px;
+            text-align: center;
         }
 
-        /* エラーメッセージ表示 */
-        .error-msg {
+        .btn-sub {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 52px;
+            background: linear-gradient(135deg, #00ff87 0%, #60efff 100%);
+            color: #000000;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: bold;
+            text-decoration: none;
+            margin-top: 4px;
+            box-shadow: 0 4px 15px rgba(0, 255, 135, 0.3);
+        }
+
+        footer {
             text-align: center;
-            color: #ff4444;
-            padding: 20px;
-            font-size: 14px;
+            font-size: 11px;
+            color: #555;
+            margin-top: auto;
+            padding: 20px 0;
         }
     </style>
 </head>
@@ -165,365 +184,508 @@
 
     <div class="container">
         <header>
-            <h1>GOLF SEARCH LIBRARY</h1>
+            <h1>ゴルフ神動画ライブラリ</h1>
         </header>
 
-        <!-- キーワード表示 -->
-        <div class="sub-header" id="keyword-display">Loading...</div>
+        <div id="sub-header" class="sub-header">「おすすめ神動画」</div>
 
-        <!-- 神動画セクション -->
-        <div class="section-title">おすすめ神動画</div>
-        <div class="video-list" id="video-list">
-            <!-- 動的にYouTubeのiframeが挿入されます -->
+        <div class="video-list" id="video-wrapper">
+            <!-- JavaScriptから動的に動画コンテナを生成・挿入します -->
         </div>
 
-        <!-- 商品紹介セクション -->
-        <div class="section-title">上達を加速させる厳選ギア</div>
-        <div class="item-card" id="item-card" style="display: none;">
-            <div class="item-title" id="item-description"></div>
-            <div class="btn-container">
-                <a href="#" class="btn btn-amazon" id="amazon-link" target="_blank">
-                    <span>📦 Amazonで見る</span>
-                </a>
-                <a href="#" class="btn btn-rakuten" id="rakuten-link" target="_blank">
-                    <span>🔴 楽天市場で見る</span>
-                </a>
+        <div class="section-title">▼ 今売れている・上達を加速させる神ヒットギア</div>
+        <div class="item-card">
+            <div id="item-title" class="item-title">おすすめゴルフギアの詳細はこちら</div>
+            <div class="btn-group">
+                <a id="amazon-link" href="https://www.amazon.co.jp/gp/bestsellers/sports/14315441" target="_blank" class="btn btn-amazon">Amazonで見る</a>
+                <a id="rakuten-link" href="https://www.rakuten.co.jp" target="_blank" class="btn btn-rakuten">楽天市場で見る</a>
             </div>
         </div>
+
+        <div class="section-title">▼ 近くの室内練習場を探す</div>
+        <div class="ad-card">
+            <div style="font-size: 16px; font-weight: bold; color: var(--accent-color);">SMART GOLF（スマートゴルフ）</div>
+            <a href="https://sma-gol.com" target="_blank" class="btn btn-sub">無料体験に申し込む</a>
+        </div>
+
+        <footer>
+            &copy; ゴルフ神動画ライブラリ All Rights Reserved.
+        </footer>
     </div>
 
     <script>
-        // パラメータ解析用関数（全角・半角スペース両対応でクリーンアップ）
-        function getKeywordParam() {
-            const params = new URLSearchParams(window.location.search);
-            let keyword = params.get('k') || params.get('keyword');
-            if (!keyword) return null;
-            
-            // デコードして前後の空白（全角半角含む）を除去、連続する空白を半角スペース1つに統合
-            keyword = decodeURIComponent(keyword).trim();
-            keyword = keyword.replace(/[\s\u3000]+/g, ' ');
-            return keyword;
-        }
+        // デフォルトのAmazonランキングURL
+        const defaultAmazon = "https://www.amazon.co.jp/gp/bestsellers/sports/14315441";
 
-        // YouTube URLから埋め込み用のVideo IDを抽出する関数
-        function getYouTubeId(url) {
-            if (!url) return null;
-            let videoId = null;
-            
-            // https://youtu.be/abc 形式のパース
-            if (url.includes('youtu.be/')) {
-                videoId = url.split('youtu.be/')[1].split(/[?#]/)[0];
-            } 
-            // https://www.youtube.com/watch?v=abc または /v/ 等のパース
-            else if (url.includes('v=')) {
-                videoId = url.split('v=')[1].split(/[&#]/)[0];
-            } else if (url.includes('/embed/')) {
-                videoId = url.split('/embed/')[1].split(/[?#]/)[0];
-            }
-            return videoId;
-        }
-
-        // no.1からno.37までの全マスターデータベース（動画タイトルは自動除外されURLのみ判定します）
-        const dynamicData = {
-            "ドライバー スライス": {
-                videos: ["https://www.youtube.com/watch?v=PY0jqwFw6zc", "https://www.youtube.com/watch?v=Fi7p5H93tNM", "https://www.youtube.com/watch?v=qKu9w25wYoU", "https://www.youtube.com/watch?v=Bkv7GgDcKm4"],
-                amazon: "https://www.amazon.co.jp/%E3%80%90%E4%BB%8A%E5%B9%B3%E5%91%A8%E5%90%BE%E3%83%97%E3%83%AD%E6%8E%A8%E5%A5%A8%E3%80%91%E3%83%80%E3%82%A4%E3%83%A4%E3%82%B4%E3%83%AB%E3%83%95-DAIYA-GOLF-%E3%82%A2%E3%83%BC%E3%83%A0%E3%82%AD%E3%83%BC%E3%83%91%E3%83%BC%E4%B8%89%E8%A7%92-TR-5011/dp/B0CY24LJD9/",
-                rakuten: "https://a.r10.to/hR5uL4",
-                desc: "【即効！】手打ちを解消し、しなりを体感して驚くほど球が捕まる大ヒット練習器具はこちら👇"
+        /**
+         * ⛳️【全37項目コンプリートマスターデータベース】
+         */
+        const videoDatabase = {
+            "1": {
+                subTitle: "「ドライバー スライス」のレッスン動画",
+                description: "【即効！】手打ちを解消し、しなりを体感して驚くほど球が捕まる大ヒット練習器具はこちら👇",
+                amazonUrl: "https://www.amazon.co.jp/%E3%80%90%E4%BB%8A%E5%B9%B3%E5%91%A8%E5%90%BE%E3%83%97%E3%83%AD%E6%8E%A8%E5%A5%A8%E3%80%91%E3%83%80%E3%82%A4%E3%83%A4%E3%82%B4%E3%83%AB%E3%83%95-DAIYA-GOLF-%E3%82%A2%E3%83%BC%E3%83%A0%E3%82%AD%E3%83%BC%E3%83%91%E3%83%BC%E3%83%99%E3%83%AB%E3%83%88/dp/B0CY24LJD9/",
+                rakutenUrl: "https://a.r10.to/hFGdgX",
+                videos: [
+                    "https://www.youtube.com/watch?v=PY0jqwFw6zc",
+                    "https://www.youtube.com/watch?v=Fi7p5H93tNM",
+                    "https://www.youtube.com/watch?v=qKu9w25wYoU",
+                    "https://www.youtube.com/watch?v=Bkv7GgDcKm4"
+                ]
             },
-            "ドライバー 脱力": {
-                videos: ["https://www.youtube.com/watch?v=c-TUQAsOsIM", "https://www.youtube.com/watch?v=aLkp57G56sA", "https://www.youtube.com/watch?v=aNsyCRPbmfE"],
-                amazon: "https://www.amazon.co.jp/%E3%83%80%E3%82%A4%E3%83%A4%E3%82%B4%E3%83%AB%E3%83%95-DAIYA-GOLF-%E3%83%80%E3%82%A4%E3%83%A4%E3%82%B9%E3%82%A4%E3%83%B3%E3%82%B0VS-TR-5008/dp/B0BZP7Z38X/",
-                rakuten: "https://a.r10.to/hF4AcX",
-                desc: "【力みゼロへ！】設定したヘッドスピードでカチッと音が鳴る！脱力して最速で振る感覚が身につく大ヒット練習器具はこちら👇"
+            "2": {
+                subTitle: "「ドライバー 脱力」のレッスン動画",
+                description: "【力みゼロへ！】設定したヘッドスピードでカチッと音が鳴る！脱力して最速で振る感覚が身につく大ヒット練習器具はこちら👇",
+                amazonUrl: "https://www.amazon.co.jp/%E3%83%80%E3%82%A4%E3%83%A4%E3%82%B4%E3%83%AB%E3%83%95-DAIYA-GOLF-%E3%83%80%E3%82%A4%E3%83%A4%E3%82%B9%E3%82%A4%E3%83%B3%E3%82%B0VS-TR-5008/dp/B0BZP7Z38X/",
+                rakutenUrl: "https://a.r10.to/hF4AcX",
+                videos: [
+                    "https://www.youtube.com/watch?v=c-TUQAsOsIM",
+                    "https://www.youtube.com/watch?v=aLkp57G56sA",
+                    "https://www.youtube.com/watch?v=aNsyCRPbmfE"
+                ]
             },
-            "ドライバー 飛距離": {
-                videos: ["https://www.youtube.com/watch?v=jkJUDZAqKvU", "https://www.youtube.com/watch?v=KpIfxu_yizc", "https://www.youtube.com/watch?v=Sr3aNDxLzrg"],
-                amazon: "https://www.amazon.co.jp/%E3%83%80%E3%82%A4%E3%83%A4%E3%82%B4%E3%83%AB%E3%83%95-DAIYA-GOLF-%E3%83%80%E3%82%A4%E3%83%A4%E3%82%B9%E3%82%A4%E3%83%B3%E3%82%B0VS-TR-5008/dp/B0BZP7Z38X/",
-                rakuten: "https://a.r10.to/hF4AcX",
-                desc: "【マン飛び！】設定したヘッドスピードでカチッと音が鳴る！限界突破の飛距離と理想のしなりを手に入れる大ヒット練習器具はこちら👇"
+            "3": {
+                subTitle: "「ドライバー 飛距離」のレッスン動画",
+                description: "【マン飛び！】設定したヘッドスピードでカチッと音が鳴る！限界突破の飛距離と理想のしなりを手に入れる大ヒット練習器具はこちら👇",
+                amazonUrl: "https://www.amazon.co.jp/%E3%83%80%E3%82%A4%E3%83%A4%E3%82%B4%E3%83%AB%E3%83%95-DAIYA-GOLF-%E3%83%80%E3%82%A4%E3%83%A4%E3%82%B9%E3%82%A4%E3%83%B3%E3%82%B0VS-TR-5008/dp/B0BZP7Z38X/",
+                rakutenUrl: "https://a.r10.to/hF4AcX",
+                videos: [
+                    "https://www.youtube.com/watch?v=jkJUDZAqKvU",
+                    "https://www.youtube.com/watch?v=KpIfxu_yizc",
+                    "https://www.youtube.com/watch?v=Sr3aNDxLzrg"
+                ]
             },
-            "ドライバー ミート率": {
-                videos: ["https://www.youtube.com/watch?v=Pl2dufjbWz4", "https://www.youtube.com/watch?v=02_Ykbi0Wkk", "https://www.youtube.com/watch?v=HPS-oe10TDM"],
-                amazon: "https://www.amazon.co.jp/%E3%83%80%E3%82%A4%E3%83%A4-DAIYA-%E3%82%B7%E3%83%A7%E3%83%83%E3%83%88%E4%BD%8D%E7%BD%AE%E7%A2%BA%E8%AA%8D%E3%82%B0%E3%83%83%E3%82%BA-%E3%82%A4%E3%83%B3%E3%83%91%E3%82%AF%E3%83%88%E3%83%9E%E3%83%BC%E3%82%AB%E3%83%BC-AS-910/dp/B079VQLPQP/",
-                rakuten: "https://a.r10.to/h5i2Qy",
-                desc: "【芯喰い！】フェースのどこに当たったか一発で分かる！ミート率を爆上げして真芯を捉える大ヒット判定シールはこちら👇"
+            "4": {
+                subTitle: "「ドライバー ミート率」のレッスン動画",
+                description: "【芯喰い！】フェースのどこに当たったか一発で分かる！ミート率を爆上げして真芯を捉える大ヒット判定シールはこちら👇",
+                amazonUrl: "https://www.amazon.co.jp/%E3%83%80%E3%82%A4%E3%83%A4-DAIYA-%E3%82%B7%E3%83%A7%E3%83%83%E3%83%88%E4%BD%8D%E7%BD%AE%E7%A2%BA%E8%AA%8D%E3%82%B0%E3%83%83%E3%82%BA-%E3%82%A4%E3%83%B3%E3%83%91%E3%82%AF%E3%83%88%E3%83%9E%E3%83%BC%E3%82%AB%E3%83%BC-AS-910/dp/B079VQLPQP/",
+                rakutenUrl: "https://a.r10.to/h5i2Qy",
+                videos: [
+                    "https://www.youtube.com/watch?v=Pl2dufjbWz4",
+                    "https://www.youtube.com/watch?v=02_Ykbi0Wkk",
+                    "https://www.youtube.com/watch?v=HPS-oe10TDM"
+                ]
             },
-            "ドライバー 選び方": {
-                videos: ["https://www.youtube.com/watch?v=XNmQtmOaft4", "https://www.youtube.com/watch?v=e-3o7OE5S5k", "https://www.youtube.com/watch?v=mOqnOq2loNw"],
-                amazon: "https://www.amazon.co.jp/s?k=TAYLORMADE+QI35+MAX",
-                rakuten: "https://a.r10.to/hPniyR",
-                desc: "【注目】「ミスに一番強い」と今ネットで圧倒的に売れている最新ドライバーのスペック確認はこちら👇"
+            "5": {
+                subTitle: "「ドライバー 選び方」のレッスン動画",
+                description: "【注目】「ミスに一番強い」と今ネットで圧倒的に売れている最新ドライバーのスペック確認はこちら👇",
+                amazonUrl: "https://www.amazon.co.jp/s?k=TAYLORMADE+QI35+MAX",
+                rakutenUrl: "https://a.r10.to/hPniyR",
+                videos: [
+                    "https://www.youtube.com/watch?v=XNmQtmOaft4",
+                    "https://www.youtube.com/watch?v=e-3o7OE5S5k",
+                    "https://www.youtube.com/watch?v=mOqnOq2loNw"
+                ]
             },
-            "ドライバー 比較": {
-                videos: ["https://www.youtube.com/watch?v=F1hrtjpjpG0", "https://www.youtube.com/watch?v=B10xNNXEBCc", "https://www.youtube.com/watch?v=Q5cgquyWBds"],
-                amazon: "https://www.amazon.co.jp/gp/bestsellers/sports/15314331",
-                rakuten: "https://a.r10.to/h5SFd4",
-                desc: "【比較】今ネットでリアルタイムに一番売れているドライバーの人気ランキングはこちら👇"
+            "6": {
+                subTitle: "「ドライバー 比較」のレッスン動画",
+                description: "【比較】今ネットでリアルタイムに一番売れているドライバーの人気ランキングはこちら👇",
+                amazonUrl: "https://www.amazon.co.jp/gp/bestsellers/sports/15314331",
+                rakutenUrl: "https://a.r10.to/h5SFd4",
+                videos: [
+                    "https://www.youtube.com/watch?v=F1hrtjpjpG0",
+                    "https://www.youtube.com/watch?v=B10xNNXEBCc",
+                    "https://www.youtube.com/watch?v=Q5cgquyWBds"
+                ]
             },
-            "FW 苦手": {
-                videos: ["https://www.youtube.com/watch?v=0nsqHRumO7E", "https://www.youtube.com/watch?v=-98jhZvueEQ", "https://www.youtube.com/watch?v=b8nH3jPOCrI"],
-                amazon: "https://www.amazon.co.jp/%E3%83%80%E3%82%A4%E3%83%A4%E3%82%B4%E3%83%AB%E3%83%95-DAIYA-GOLF-%E3%83%80%E3%82%A4%E3%83%A4%E3%82%B9%E3%82%A4%E3%83%B3%E3%82%B0VS-TR-5008/dp/B0BZP7Z38X/",
-                rakuten: "https://a.r10.to/hF4AcX",
-                desc: "【ダフリ撲滅！】最下点でカチッと音が鳴る！すくい打ちを直してフェFWが芯に当たる大ヒット練習器具はこちら👇"
+            "7": {
+                subTitle: "「FW 苦手」のレッスン動画",
+                description: "【ダフリ撲滅！】最下点でカチッと音が鳴る！すくい打ちを直してフェFWが芯に当たる大ヒット練習器具はこちら👇",
+                amazonUrl: "https://www.amazon.co.jp/%E3%83%80%E3%82%A4%E3%83%A4%E3%82%B4%E3%83%AB%E3%83%95-DAIYA-GOLF-%E3%83%80%E3%82%A4%E3%83%A4%E3%82%B9%E3%82%A4%E3%83%B3%E3%82%B0VS-TR-5008/dp/B0BZP7Z38X/",
+                rakutenUrl: "https://a.r10.to/hF4AcX",
+                videos: [
+                    "https://www.youtube.com/watch?v=0nsqHRumO7E",
+                    "https://www.youtube.com/watch?v=-98jhZvueEQ",
+                    "https://www.youtube.com/watch?v=b8nH3jPOCrI"
+                ]
             },
-            "ユーティリティ 打ち方": {
-                videos: ["https://www.youtube.com/watch?v=SyedSnMbbKU", "https://www.youtube.com/watch?v=E9B217Mk3g8", "https://www.youtube.com/watch?v=QiTFXLG9P-w", "https://www.youtube.com/watch?v=v=vG_BfXf9F-w"],
-                amazon: "https://www.amazon.co.jp/%E3%83%80%E3%82%A4%E3%83%A4%E3%82%B4%E3%83%AB%E3%83%95-DAIYA-GOLF-%E3%83%80%E3%82%A4%E3%83%A4%E3%82%B9%E3%82%A4%E3%83%B3%E3%82%B0VS-TR-5008/dp/B0BZP7Z38X/",
-                rakuten: "https://a.r10.to/hF4AcX",
-                desc: "【アイアン感覚】最下点でカチッと音が鳴る！UTのダフリ・トップを未然に防ぎ、ハイドローで攻められる大ヒット練習器具はこちら👇"
+            "8": {
+                subTitle: "「ユーティリティ 打ち方」のレッスン動画",
+                description: "【アイアン感覚】最下点でカチッと音が鳴る！UTのダフリ・トップを未然に防ぎ、ハイドローで攻められる大ヒット練習器具はこちら👇",
+                amazonUrl: "https://www.amazon.co.jp/%E3%83%80%E3%82%A4%E3%83%A4%E3%82%B4%E3%83%AB%E3%83%95-DAIYA-GOLF-%E3%83%80%E3%82%A4%E3%83%A4%E3%82%B9%E3%82%A4%E3%83%B3%E3%82%B0VS-TR-5008/dp/B0BZP7Z38X/",
+                rakutenUrl: "https://a.r10.to/hF4AcX",
+                videos: [
+                    "https://www.youtube.com/watch?v=SyedSnMbbKU",
+                    "https://www.youtube.com/watch?v=E9B217Mk3g8",
+                    "https://www.youtube.com/watch?v=QiTFXLG9P-w",
+                    "https://www.youtube.com/watch?v=vG_BfXf9F-w"
+                ]
             },
-            "FW UT 選び方": {
-                videos: ["https://www.youtube.com/watch?v=M9G9yWshWz0", "https://www.youtube.com/watch?v=6m8v7yHw9A8", "https://www.youtube.com/watch?v=I6B0_Y-oIco"],
-                amazon: "https://www.amazon.co.jp/gp/bestsellers/sports/15314341",
-                rakuten: "https://a.r10.to/hPN8as",
-                desc: "【注目】「とにかく上がってミスに強い」と今ネットで一番売れている最新フェアウェイウッドのランキングはこちら👇"
+            "9": {
+                subTitle: "「FW UT 選び方」のレッスン動画",
+                description: "【注目】「とにかく上がってミスに強い」と今ネットで一番売れている最新フェアウェイウッドのランキングはこちら👇",
+                amazonUrl: "https://www.amazon.co.jp/gp/bestsellers/sports/15314341",
+                rakutenUrl: "https://a.r10.to/hPN8as",
+                videos: [
+                    "https://www.youtube.com/watch?v=M9G9yWshWz0",
+                    "https://www.youtube.com/watch?v=6m8v7yHw9A8",
+                    "https://www.youtube.com/watch?v=I6B0_Y-oIco"
+                ]
             },
-            "FW UT 比較": {
-                videos: ["https://www.youtube.com/watch?v=Y8X6M7Xw4gE", "https://www.youtube.com/watch?v=bZ7Xf5X8W8A", "https://www.youtube.com/watch?v=I9mB4f4_9B0"],
-                amazon: "https://www.amazon.co.jp/gp/bestsellers/sports/15314351",
-                rakuten: "https://a.r10.to/hPN8M2",
-                desc: "【比較】「ロングアイアンより圧倒的に優しい」と今ネットで大流行しているユーティリティの人気ランキングはこちら👇"
+            "10": {
+                subTitle: "「FW UT 比較」のレッスン動画",
+                description: "【比較】「ロングアイアンより圧倒的に優しい」と今ネットで大流行しているユーティリティの人気ランキングはこちら👇",
+                amazonUrl: "https://www.amazon.co.jp/gp/bestsellers/sports/15314351",
+                rakutenUrl: "https://a.r10.to/hPN8M2",
+                videos: [
+                    "https://www.youtube.com/watch?v=Y8X6M7Xw4gE",
+                    "https://www.youtube.com/watch?v=bZ7Xf5X8W8A",
+                    "https://www.youtube.com/watch?v=I9mB4f4_9B0"
+                ]
             },
-            "テイクバック": {
-                videos: ["https://www.youtube.com/watch?v=6K_0mPKRDBc", "https://www.youtube.com/watch?v=pVIqe5wtCZA", "https://www.youtube.com/watch?v=70YHkdhG5HQ"],
-                amazon: "https://www.amazon.co.jp/%E3%83%80%E3%82%A4%E3%83%A4%E3%82%B4%E3%83%AB%E3%83%95-DAIYA-GOLF-%E3%82%A2%E3%83%BC%E3%83%A0%E3%82%AD%E3%83%BC%E3%83%91%E3%83%BC%E3%83%99%E3%83%AB%E3%83%88/dp/B0CY24LJD9/",
-                rakuten: "https://a.r10.to/hR5uL4",
-                desc: "【正解の始動】手先でひょいと上げる悪癖をロック！プロのような「体との一体感」が勝手に身につく大ヒット器具はこちら👇"
+            "11": {
+                subTitle: "「テイクバック」のレッスン動画",
+                description: "【正解の始動】手先でひょいと上げる悪癖をロック！プロのような「体との一体感」が勝手に身につく大ヒット器具はこちら👇",
+                amazonUrl: "https://www.amazon.co.jp/%E3%83%80%E3%82%A4%E3%83%A4%E3%82%B4%E3%83%AB%E3%83%95-DAIYA-GOLF-%E3%82%A2%E3%83%BC%E3%83%A0%E3%82%AD%E3%83%BC%E3%83%91%E3%83%BC%E3%83%99%E3%83%AB%E3%83%88/dp/B0CY24LJD9/",
+                rakutenUrl: "https://a.r10.to/hR5uL4",
+                videos: [
+                    "https://www.youtube.com/watch?v=6K_0mPKRDBc",
+                    "https://www.youtube.com/watch?v=pVIqe5wtCZA",
+                    "https://www.youtube.com/watch?v=70YHkdhG5HQ"
+                ]
             },
-            "アイアン 芯": {
-                videos: ["https://www.youtube.com/watch?v=hJlBmjLBGS8", "https://www.youtube.com/watch?v=t8Kxzo_zJvw", "https://www.youtube.com/watch?v=tJpS2ZjTCmI"],
-                amazon: "https://www.amazon.co.jp/%E3%83%80%E3%82%A6%E3%83%B3%E3%83%96%E3%83%AD%E3%83%BC%E3%83%BC%E3%83%9E%E3%82%B9%E3%82%BF%E3%83%BC/dp/B0CB86LWJF/",
-                rakuten: "https://a.r10.to/hgZyj2",
-                desc: "【芯喰い】自己流では辿り着けない“正しいインパクト”を体に覚え込ませる！プロが本気で監修した本当に役立つ大ヒット器具はこちら👇"
+            "12": {
+                subTitle: "「アイアン 芯」のレッスン動画",
+                description: "【芯喰い】自己流では辿り着けない“正しいインパクト”を体に覚え込ませる！プロが本気で監修した本当に役立つ大ヒット器具はこちら👇",
+                amazonUrl: "https://www.amazon.co.jp/%E3%83%80%E3%82%A6%E3%83%B3%E3%83%96%E3%83%AD%E3%83%BC%E3%83%BC%E3%83%9E%E3%82%B9%E3%82%BF%E3%83%BC/dp/B0CB86LWJF/",
+                rakutenUrl: "https://a.r10.to/hgZyj2",
+                videos: [
+                    "https://www.youtube.com/watch?v=hJlBmjLBGS8",
+                    "https://www.youtube.com/watch?v=t8Kxzo_zJvw",
+                    "https://www.youtube.com/watch?v=tJpS2ZjTCmI"
+                ]
             },
-            "ハンドファースト": {
-                videos: ["https://www.youtube.com/watch?v=0b8MnAM8vaI", "https://www.youtube.com/watch?v=XJEmiLBrN14", "https://www.youtube.com/watch?v=T6iLUhMQGvc"],
-                amazon: "https://www.amazon.co.jp/%E3%83%80%E3%82%A6%E3%83%B3%E3%83%96%E3%83%AD%E3%83%BC%E3%83%BC%E3%83%9E%E3%82%B9%E3%82%BF%E3%83%BC/dp/B0CB86LWJF/",
-                rakuten: "https://a.r10.to/hgZyj2",
-                desc: "【本物のハンドファースト】手首の折れを物理的に防止！アマ特有の悪癖を直して「ぶ厚いインパクト」が自然に手に入る大ヒット器具はこちら👇"
+            "13": {
+                subTitle: "「ハンドファースト」のレッスン動画",
+                description: "【本物のハンドファースト】手首の折れを物理的に防止！アマ特有の悪癖を直して「ぶ厚いインパクト」が自然に手に入る大ヒット器具はこちら👇",
+                amazonUrl: "https://www.amazon.co.jp/%E3%83%80%E3%82%A6%E3%83%B3%E3%83%96%E3%83%AD%E3%83%BC%E3%83%BC%E3%83%9E%E3%82%B9%E3%82%BF%E3%83%BC/dp/B0CB86LWJF/",
+                rakutenUrl: "https://a.r10.to/hgZyj2",
+                videos: [
+                    "https://www.youtube.com/watch?v=0b8MnAM8vaI",
+                    "https://www.youtube.com/watch?v=XJEmiLBrN14",
+                    "https://www.youtube.com/watch?v=T6iLUhMQGvc"
+                ]
             },
-            "傾斜地 攻略": {
-                videos: ["https://www.youtube.com/watch?v=v6WKZSzZuaA", "https://www.youtube.com/watch?v=3obbWPf5exc", "https://www.youtube.com/watch?v=QMOB8ucwjRk"],
-                amazon: "https://www.amazon.co.jp/EENOUR-%E3%82%B4%E3%83%AB%E3%83%95%E3%83%AC%E3%83%BC%E3%82%B6%E3%83%BC%E8%B7%9D%E9%9B%A2%E8%A8%88-U800/dp/B0DFH1M2BL/",
-                rakuten: "https://a.r10.to/h5BEHc",
-                desc: "【コース戦略】打ち上げ・打ち下ろしの「高低差」を正確に加味！傾斜地でのクラブ選択をサポートしてくれる大ヒットレーザー距離計はこちら👇"
+            "14": {
+                subTitle: "「傾斜地 攻略」のレッスン動画",
+                description: "【コース戦略】打ち上げ・打ち下ろしの「高低差」を正確に加味！傾斜地でのクラブ選択をサポートしてくれる大ヒットレーザー距離計はこちら👇",
+                amazonUrl: "https://www.amazon.co.jp/EENOUR-%E3%82%B4%E3%83%AB%E3%83%95%E3%83%AC%E3%83%BC%E3%82%B6%E3%83%BC%E8%B7%9D%E9%9B%A2%E8%A8%88-U800/dp/B0DFH1M2BL/",
+                rakutenUrl: "https://a.r10.to/h5BEHc",
+                videos: [
+                    "https://www.youtube.com/watch?v=v6WKZSzZuaA",
+                    "https://www.youtube.com/watch?v=3obbWPf5exc",
+                    "https://www.youtube.com/watch?v=QMOB8ucwjRk"
+                ]
             },
-            "アイアン 選び方": {
-                videos: ["https://www.youtube.com/watch?v=P_2bAr731WM", "https://www.youtube.com/watch?v=zHUne0Q2FgM", "https://www.youtube.com/watch?v=-bZxr4y-PIk"],
-                amazon: "https://www.amazon.co.jp/gp/bestsellers/sports/15314321",
-                rakuten: "https://a.r10.to/hP7yhS",
-                desc: "【注目】「優しく狙える」と今ネットでリアルタイムに一番売れている最新アイアンのランキングはこちら👇"
+            "15": {
+                subTitle: "「アイアン 選び方」のレッスン動画",
+                description: "【注目】「優しく狙える」と今ネットでリアルタイムに一番売れている最新アイアンのランキングはこちら👇",
+                amazonUrl: "https://www.amazon.co.jp/gp/bestsellers/sports/15314321",
+                rakutenUrl: "https://a.r10.to/hP7yhS",
+                videos: [
+                    "https://www.youtube.com/watch?v=P_2bAr731WM",
+                    "https://www.youtube.com/watch?v=zHUne0Q2FgM",
+                    "https://www.youtube.com/watch?v=-bZxr4y-PIk"
+                ]
             },
-            "アイアン 比較": {
-                videos: ["https://www.youtube.com/watch?v=FANAdGgp5Ys", "https://www.youtube.com/watch?v=ABDUx3jtLKg", "https://www.youtube.com/watch?v=AHbJ-U2CoNk"],
-                amazon: "https://www.amazon.co.jp/gp/bestsellers/sports/15314321",
-                rakuten: "https://a.r10.to/hP7yhS",
-                desc: "【比較】】今ネットで一番売れているアイアンの人気ランキングはこちら👇"
+            "16": {
+                subTitle: "「アイアン 比較」のレッスン動画",
+                description: "【比較】今ネットで一番売れているアイアンの人気ランキングはこちら👇",
+                amazonUrl: "https://www.amazon.co.jp/gp/bestsellers/sports/15314321",
+                rakutenUrl: "https://a.r10.to/hP7yhS",
+                videos: [
+                    "https://www.youtube.com/watch?v=FANAdGgp5Ys",
+                    "https://www.youtube.com/watch?v=ABDUx3jtLKg",
+                    "https://www.youtube.com/watch?v=AHbJ-U2CoNk"
+                ]
             },
-            "アプローチの基本": {
-                videos: ["https://www.youtube.com/watch?v=KieZd8IFBFk", "https://www.youtube.com/watch?v=DtlGQ7UE46Q", "https://www.youtube.com/watch?v=ryZghGdoJV8"],
-                amazon: "https://www.amazon.co.jp/%E3%83%80%E3%82%A4%E3%83%A4%E3%82%B4%E3%83%AB%E3%83%95-DAIYA-GOLF-%E3%82%A2%E3%83%BC%E3%83%A0%E3%82%AD%E3%83%BC%E3%83%91%E3%83%BC%E4%B8%89%E8%A7%92-TR-5011/dp/B0CY24LJD9/",
-                rakuten: "https://a.r10.to/hR5uL4",
-                desc: "【ザックリ・トップ撲滅】手首の余計な動きをロック！アプローチが劇的に安定し、優しく寄せられる大ヒット器具はこちら👇"
+            "17": {
+                subTitle: "「アプローチの基本」のレッスン動画",
+                description: "【ザックリ・トップ撲滅】手首の余計な動きをロック！アプローチが劇的に安定し、優しく寄せられる大ヒット器具はこちら👇",
+                amazonUrl: "https://www.amazon.co.jp/%E3%83%80%E3%82%A4%E3%83%A4%E3%82%B4%E3%83%AB%E3%83%95-DAIYA-GOLF-%E3%82%A2%E3%83%BC%E3%83%A0%E3%82%AD%E3%83%BC%E3%83%91%E3%83%BC%E4%B8%89%E8%A7%92-TR-5011/dp/B0CY24LJD9/",
+                rakutenUrl: "https://a.r10.to/hR5uL4",
+                videos: [
+                    "https://www.youtube.com/watch?v=KieZd8IFBFk",
+                    "https://www.youtube.com/watch?v=DtlGQ7UE46Q",
+                    "https://www.youtube.com/watch?v=ryZghGdoJV8"
+                ]
             },
-            "アプローチ 転がし": {
-                videos: ["https://www.youtube.com/watch?v=iAyfL5LGXQQ", "https://www.youtube.com/watch?v=o-NZyYkCHtc", "https://www.youtube.com/watch?v=qQeVZqB8zXU"],
-                amazon: "https://www.amazon.co.jp/HONMA-2024-BT2401-%E3%83%9B%E3%83%AF%E3%82%A4%E3%83%88/dp/B0CTLVF8CL/",
-                rakuten: "https://a.r10.to/hPDdku",
-                desc: "【コスパ最強】転がして寄せるアプローチに最適！打感が良くコースで気兼ねなく使える日本一売れている大ヒットボールはこちら👇"
+            "18": {
+                subTitle: "「アプローチ 転がし」のレッスン動画",
+                description: "【コスパ最強】転がして寄せるアプローチに最適！打感が良くコースで気兼ねなく使える日本一売れている大ヒットボールはこちら👇",
+                amazonUrl: "https://www.amazon.co.jp/HONMA-2024-BT2401-%E3%83%9B%E3%83%AF%E3%82%A4%E3%83%88/dp/B0CTLVF8CL/",
+                rakutenUrl: "https://a.r10.to/hPDdku",
+                videos: [
+                    "https://www.youtube.com/watch?v=iAyfL5LGXQQ",
+                    "https://www.youtube.com/watch?v=o-NZyYkCHtc",
+                    "https://www.youtube.com/watch?v=qQeVZqB8zXU"
+                ]
             },
-            "アプローチ 50y前後": {
-                videos: ["https://www.youtube.com/watch?v=Qg260wLyoD8", "https://www.youtube.com/watch?v=QWPf5I5CEiw", "https://www.youtube.com/watch?v=xfcOPTwVT24"],
-                amazon: "https://www.amazon.co.jp/EENOUR-%E3%82%B4%E3%83%AB%E3%83%95%E3%83%AC%E3%83%BC%E3%82%B6%E3%83%BC%E8%B7%9D%E9%9B%A2%E8%A8%88-U800/dp/B0DFH1M2BL/",
-                rakuten: "https://a.r10.to/h5BEHc",
-                desc: "【距離のプロ】中途半端な距離こそ正確なジャッジが必須！ピンまでの残りヤード数を瞬時に測定する大ヒットレーザー距離計はこちら👇"
+            "19": {
+                subTitle: "「アプローチ 50y前後」のレッスン動画",
+                description: "【距離のプロ】中途半端な距離こそ正確なジャッジが必須！ピンまでの残りヤード数を瞬時に測定する大ヒットレーザー距離計はこちら👇",
+                amazonUrl: "https://www.amazon.co.jp/EENOUR-%E3%82%B4%E3%83%AB%E3%83%95%E3%83%AC%E3%83%BC%E3%82%B6%E3%83%BC%E8%B7%9D%E9%9B%A2%E8%A8%88-U800/dp/B0DFH1M2BL/",
+                rakutenUrl: "https://a.r10.to/h5BEHc",
+                videos: [
+                    "https://www.youtube.com/watch?v=Qg260wLyoD8",
+                    "https://www.youtube.com/watch?v=QWPf5I5CEiw",
+                    "https://www.youtube.com/watch?v=xfcOPTwVT24"
+                ]
             },
-            "バニラピッチ": {
-                videos: ["https://www.youtube.com/watch?v=8r-FZ3tlx1w", "https://www.youtube.com/watch?v=qOoiUtIzDDw", "https://www.youtube.com/watch?v=PHObx1CtcY0"],
-                amazon: "https://www.amazon.co.jp/HONMA-2024-BT2401-%E3%83%9B%E3%83%AF%E3%82%A4%E3%83%88/dp/B0CTLVF8CL/",
-                rakuten: "https://a.r10.to/hPDdku",
-                desc: "【相性抜群】パター感覚で優しく転がして寄せる最新メソッドに最適！コストを気にせずコースで使える日本一売れている大ヒットボールはこちら👇"
+            "20": {
+                subTitle: "「バニラピッチ」のレッスン動画",
+                description: "【相性抜群】パター感覚で優しく転がして寄せる最新メソッドに最適！コストを気にせずコースで使える日本一売れている大ヒットボールはこちら👇",
+                amazonUrl: "https://www.amazon.co.jp/HONMA-2024-BT2401-%E3%83%9B%E3%83%AF%E3%82%A4%E3%83%88/dp/B0CTLVF8CL/",
+                rakutenUrl: "https://a.r10.to/hPDdku",
+                videos: [
+                    "https://www.youtube.com/watch?v=8r-FZ3tlx1w",
+                    "https://www.youtube.com/watch?v=qOoiUtIzDDw",
+                    "https://www.youtube.com/watch?v=PHObx1CtcY0"
+                ]
             },
-            "簡単 バンカー": {
-                videos: ["https://www.youtube.com/watch?v=-kK2xl09ALs", "https://www.youtube.com/watch?v=ytdzYDhDF5I", "https://www.youtube.com/watch?v=s8CFxVKBPzc"],
-                amazon: "https://www.amazon.co.jp/gp/bestsellers/sports/15319891",
-                rakuten: "https://a.r10.to/hgPUDm",
-                desc: "【脱出】「抜けが良くて簡単に上がる」と今ネットでリアルタイムに一番売れているウェッジの人気ランキングはこちら👇"
+            "21": {
+                subTitle: "「簡単 バンカー」のレッスン動画",
+                description: "【脱出】「抜けが良くて簡単に上がる」と今ネットでリアルタイムに一番売れているウェッジの人気ランキングはこちら👇",
+                amazonUrl: "https://www.amazon.co.jp/gp/bestsellers/sports/15319891",
+                rakutenUrl: "https://a.r10.to/hgPUDm",
+                videos: [
+                    "https://www.youtube.com/watch?v=-kK2xl09ALs",
+                    "https://www.youtube.com/watch?v=ytdzYDhDF5I",
+                    "https://www.youtube.com/watch?v=s8CFxVKBPzc"
+                ]
             },
-            "ウェッジ 選び方": {
-                videos: ["https://www.youtube.com/watch?v=7ZU8MMDsd2w", "https://www.youtube.com/watch?v=iiSG3EgBvDY", "https://www.youtube.com/watch?v=7EYC-68-ekg"],
-                amazon: "https://www.amazon.co.jp/gp/bestsellers/sports/15319891",
-                rakuten: "https://a.r10.to/hgPUDm",
-                desc: "【注目】「ミスに強くて優しい」と今ネットでリアルタイムに一番売れているウェッジのランキングはこちら👇"
+            "22": {
+                subTitle: "「ウェッジ 選び方」のレッスン動画",
+                description: "【注目】「ミスに強くて優しい」と今ネットでリアルタイムに一番売れているウェッジのランキングはこちら👇",
+                amazonUrl: "https://www.amazon.co.jp/gp/bestsellers/sports/15319891",
+                rakutenUrl: "https://a.r10.to/hgPUDm",
+                videos: [
+                    "https://www.youtube.com/watch?v=7ZU8MMDsd2w",
+                    "https://www.youtube.com/watch?v=iiSG3EgBvDY",
+                    "https://www.youtube.com/watch?v=7EYC-68-ekg"
+                ]
             },
-            "ウェッジ 比較": {
-                videos: ["https://www.youtube.com/watch?v=nmAezUufqxY", "https://www.youtube.com/watch?v=YBiTD_hYuA0", "https://www.youtube.com/watch?v=UTtAKzkvrws"],
-                amazon: "https://www.amazon.co.jp/gp/bestsellers/sports/15319891",
-                rakuten: "https://a.r10.to/hgPUDm",
-                desc: "【比較】「抜けが良くスピンがかかる」と今ネットで一番売れているウェッジの人気ランキングはこちら👇"
+            "23": {
+                subTitle: "「ウェッジ 比較」のレッスン動画",
+                description: "【比較】「抜けが良くスピンがかかる」と今ネットで一番売れているウェッジの人気ランキングはこちら👇",
+                amazonUrl: "https://www.amazon.co.jp/gp/bestsellers/sports/15319891",
+                rakutenUrl: "https://a.r10.to/hgPUDm",
+                videos: [
+                    "https://www.youtube.com/watch?v=nmAezUufqxY",
+                    "https://www.youtube.com/watch?v=YBiTD_hYuA0",
+                    "https://www.youtube.com/watch?v=UTtAKzkvrws"
+                ]
             },
-            "ショートパット": {
-                videos: ["https://www.youtube.com/watch?v=WMWV0NSXgHw", "https://www.youtube.com/watch?v=MRomv4wO61M", "https://www.youtube.com/watch?v=e64k4l8PZbs"],
-                amazon: "https://www.amazon.co.jp/PuttOut-PuttOUT-%E3%83%97%E3%83%AC%E3%83%9F%E3%82%A2%E3%83%A0%E3%83%97%E3%83%AC%E3%83%83%E3%82%B7%E3%83%A3%E3%83%BC%E3%83%91%E3%83%83%E3%83%88%E3%83%88%E3%83%AC%E3%83%BC%E3%83%8A%E3%83%BC/dp/B0BL1SSV8X/",
-                rakuten: "https://a.r10.to/h5Hup2",
-                desc: "【ごまかしゼロ】完璧な方向性とタッチが揃った時だけボールがとまる！1mを確実に沈める精度を自宅で磨ける話題の科学的ギアはこちら👇"
+            "24": {
+                subTitle: "「ショートパット」のレッスン動画",
+                description: "【ごまかしゼロ】完璧な方向性とタッチが揃った時だけボールがとまる！1mを確実に沈める精度を自宅で磨ける話題の科学的ギアはこちら👇",
+                amazonUrl: "https://www.amazon.co.jp/PuttOut-PuttOUT-%E3%83%97%E3%83%AC%E3%83%9F%E3%82%A2%E3%83%A0%E3%83%97%E3%83%AC%E3%83%83%E3%82%B7%E3%83%A3%E3%83%BC%E3%83%91%E3%83%83%E3%83%88%E3%83%88%E3%83%AE%E3%83%BC%E3%83%8A%E3%83%BC/dp/B0BL1SSV8X/",
+                rakutenUrl: "https://a.r10.to/h5Hup2",
+                videos: [
+                    "https://www.youtube.com/watch?v=WMWV0NSXgHw",
+                    "https://www.youtube.com/watch?v=MRomv4wO61M",
+                    "https://www.youtube.com/watch?v=e64k4l8PZbs"
+                ]
             },
-            "ロングパット": {
-                videos: ["https://www.youtube.com/watch?v=n6m-9BHLCRA", "https://www.youtube.com/watch?v=Y1QVYLeF_3A", "https://www.youtube.com/watch?v=Xbg2WDuUuvQ"],
-                amazon: "https://www.amazon.co.jp/%E3%83%91%E3%82%BF%E3%83%BC%E3%83%9E%E3%83%83%E3%83%88%E5%B7%A5%E6%88%BF-%E3%82%B9%E3%83%BC%E3%83%91%E3%83%BC%E3%83%99%E3%83%B3%E3%83%88/dp/B008I42VUC/",
-                rakuten: "https://a.r10.to/hPOJpX",
-                desc: "【本芝の再現】リアルな距離感を自宅で磨く！本物のベント芝の滑らかな転がりとスピードを徹底追求した大ヒット国産マットはこちら👇"
+            "25": {
+                subTitle: "「ロングパット」のレッスン動画",
+                description: "【本芝の再現】リアルな距離感を自宅で磨く！本物のベント芝の滑らかな転がりとスピードを徹底追求した大ヒット国産マットはこちら👇",
+                amazonUrl: "https://www.amazon.co.jp/%E3%83%91%E3%82%BF%E3%83%BC%E3%83%9E%E3%83%83%E3%83%88%E5%B7%A5%E6%88%BF-%E3%82%B9%E3%83%BC%E3%83%91%E3%83%BC%E3%83%99%E3%83%B3%E3%83%88/dp/B008I42VUC/",
+                rakutenUrl: "https://a.r10.to/hPOJpX",
+                videos: [
+                    "https://www.youtube.com/watch?v=n6m-9BHLCRA",
+                    "https://www.youtube.com/watch?v=Y1QVYLeF_3A",
+                    "https://www.youtube.com/watch?v=Xbg2WDuUuvQ"
+                ]
             },
-            "3パット 撲滅": {
-                videos: ["https://www.youtube.com/watch?v=FqXfkGZDA3k", "https://www.youtube.com/watch?v=-40uL3z-jII", "https://www.youtube.com/watch?v=zVXbjw0TrxU"],
-                amazon: "https://www.amazon.co.jp/%E3%83%91%E3%82%BF%E3%83%BC%E3%83%9E%E3%83%83%E3%83%88%E5%B7%A5%E6%88%BF-%E3%82%B9%E3%83%BC%E3%83%91%E3%83%BC%E3%83%99%E3%83%B3%E3%83%88/dp/B008I42VUC/",
-                rakuten: "https://a.r10.to/hPOJpX",
-                desc: "【3パット撲滅】距離感が合わない悪癖を解消！実際のベント芝と同じ「自然な減速とタッチ」を自宅で徹底して体に染み込ませる大ヒット日本製マットはこちら👇"
+            "26": {
+                subTitle: "「3パット 撲滅」のレッスン動画",
+                description: "【3パット撲滅】距離感が合わない悪癖を解消！実際のベント芝と同じ「自然な減速とタッチ」を自宅で徹底して体に染み込ませる大ヒット日本製マットはこちら👇",
+                amazonUrl: "https://www.amazon.co.jp/%E3%83%91%E3%82%BF%E3%83%BC%E3%83%9E%E3%83%83%E3%83%88%E5%B7%A5%E6%88%BF-%E3%82%B9%E3%83%BC%E3%83%91%E3%83%BC%E3%83%99%E3%83%B3%E3%83%88/dp/B008I42VUC/",
+                rakutenUrl: "https://a.r10.to/hPOJpX",
+                videos: [
+                    "https://www.youtube.com/watch?v=FqXfkGZDA3k",
+                    "https://www.youtube.com/watch?v=-40uL3z-jII",
+                    "https://www.youtube.com/watch?v=zVXbjw0TrxU"
+                ]
             },
-            "ライン 読み方": {
-                videos: ["https://www.youtube.com/watch?v=_pOmXd8dfhM", "https://www.youtube.com/watch?v=uBkYLkaQezQ", "https://www.youtube.com/watch?v=ReIvPDWHeDU"],
-                amazon: "https://www.amazon.co.jp/%E3%83%86%E3%83%BC%E3%83%A9%E3%83%BC%E3%83%A1%E3%82%A4%E3%83%89-TAYLOR-Stripe-%E3%83%84%E3%82%A2%E3%83%BC%E3%83%AC%E3%82%B9%E3%83%9D%E3%83%B3%E3%82%B9-%E3%82%B4%E3%83%AB%E3%83%95%E3%83%9C%E3%83%BC%E3%83%AB/dp/B0DV5CHX6D/ref=sr_1_1?__mk_ja_JP=%E3%82%AB%E3%82%BF%E3%82%AB%E3%83%8A&dib=eyJ2IjoiMSJ9.nKOdJuHYaVYbB5AWPAQIJAc9aT7IlVCIruOAmIFE8BnRhxBwbi9B0eJWcQ4KBhe89zhxs8fdTw_3RjjDapV7LP61sVhMLQCDtPzb450bT29Dz9gDJIHsLZ0H8Nj7UIEIldiBOede-AWJES3UuHSBB7CL6Nxr-BWJNvs0TN5euVEzGcwskTsRmxRlYZVG0SYoYFnZ73hMRIUfEjXp7zLLss4z7p5c1nWe3b4zWrHVXp4CFVr-vTK0gX6R2s4_Z8WDQkK01krE2d8fT97IOBflWPsDUQYmDN5TTU7LyrPE7f4.QvGyUV5UaLYN_jg4_cEYBnbEhT3zw7v9k2EzBSoESJI&dib_tag=se&keywords=TAYLORMADE%2BTOUR%2BRESPONSE%2BSTRIPE%2B25%2BBL%2B12P&qid=1783210359&sr=8-1&th=1",
-                rakuten: "https://a.r10.to/hPf85a",
-                desc: "【画期的！】ボールを真っ直ぐにセットしやすい！ぐるりと一周する幅広ライン入りの大ヒットボールはこちら👇"
+            "27": {
+                subTitle: "「ライン 読み方」のレッスン動画",
+                description: "【画ッキー！】ボールを真っ直ぐにセットしやすい！ぐるりと一周する幅広ライン入りの大ヒットボールはこちら👇",
+                amazonUrl: "https://www.amazon.co.jp/%E3%83%16%E3%83%BC%E3%83%A9%E3%83%BC%E3%83%A1%E3%82%A4%E3%83%89-TAYLOR-Stripe-%E3%83%84%E3%82%A2%E3%83%BC%E3%83%AC%E3%82%B9%E3%83%9D%E3%83%B3%E3%82%B9-%E3%82%B4%E3%83%AB%E3%83%95%E3%83%BC%E3%83%9C%E3%83%BC%E3%83%AB/dp/B0DV5CHX6D/",
+                rakutenUrl: "https://a.r10.to/hPf85a",
+                videos: [
+                    "https://www.youtube.com/watch?v=_pOmXd8dfhM",
+                    "https://www.youtube.com/watch?v=uBkYLkaQezQ",
+                    "https://www.youtube.com/watch?v=ReIvPDWHeDU"
+                ]
             },
-            "ボールの線合わせ": {
-                videos: ["https://www.youtube.com/watch?v=CODj0TDW6LQ", "https://www.youtube.com/watch?v=cYAqaUQJS20", "https://www.youtube.com/watch?v=mXCoXv2DYks"],
-                amazon: "https://www.amazon.co.jp/%E3%83%86%E3%83%BC%E3%83%A9%E3%83%BC%E3%83%A1%E3%82%A4%E3%83%89-TAYLOR-Stripe-%E3%83%84%E3%82%A2%E3%83%BC%E3%83%AC%E3%82%B9%E3%83%9D%E3%83%B3%E3%82%B9-%E3%82%B4%E3%83%AB%E3%83%95%E3%83%9C%E3%83%BC%E3%83%AB/dp/B0DV5CHX6D/ref=sr_1_1?__mk_ja_JP=%E3%82%AB%E3%82%BF%E3%82%AB%E3%83%8A&dib=eyJ2IjoiMSJ9.nKOdJuHYaVYbB5AWPAQIJAc9aT7IlVCIruOAmIFE8BnRhxBwbi9B0eJWcQ4KBhe89zhxs8fdTw_3RjjDapV7LP61sVhMLQCDtPzb450bT29Dz9gDJIHsLZ0H8Nj7UIEIldiBOede-AWJES3UuHSBB7CL6Nxr-BWJNvs0TN5euVEzGcwskTsRmxRlYZVG0SYoYFnZ73hMRIUfEjXp7zLLss4z7p5c1nWe3b4zWrHVXp4CFVr-vTK0gX6R2s4_Z8WDQkK01krE2d8fT97IOBflWPsDUQYmDN5TTU7LyrPE7f4.QvGyUV5UaLYN_jg4_cEYBnbEhT3zw7v9k2EzBSoESJI&dib_tag=se&keywords=TAYLORMADE%2BTOUR%2BRESPONSE%2BSTRIPE%2B25%2BBL%2B12P&qid=1783210359&sr=8-1&th=1",
-                rakuten: "https://a.r10.to/hPf85a",
-                desc: "【完全一致】自分で線を引く手間もズレも一切なし！360°の極太バンドが狙ったターゲットへの完璧なアライメントを約束する大ヒットボールはこちら👇"
+            "28": {
+                subTitle: "「ボールの線合わせ」のレッスン動画",
+                description: "【完全一致】自分で線を引く手間もズレも一切なし！360°の極太バンドが狙ったターゲットへの完璧なアライメントを約束する大ヒットボールはこちら👇",
+                amazonUrl: "https://www.amazon.co.jp/%E3%83%16%E3%83%BC%E3%83%A9%E3%83%BC%E3%83%A1%E3%82%A4%E3%83%89-TAYLOR-Stripe-%E3%83%84%E3%82%A2%E3%83%BC%E3%83%AC%E3%82%B9%E3%83%9D%E3%83%B3%E3%82%B9-%E3%82%B4%E3%83%AB%E3%83%95%E3%83%BC%E3%83%9C%E3%83%BC%E3%83%AB/dp/B0DV5CHX6D/",
+                rakutenUrl: "https://a.r10.to/hPf85a",
+                videos: [
+                    "https://www.youtube.com/watch?v=CODj0TDW6LQ",
+                    "https://www.youtube.com/watch?v=cYAqaUQJS20",
+                    "https://www.youtube.com/watch?v=mXCoXv2DYks"
+                ]
             },
-            "パター 選び方": {
-                videos: ["https://www.youtube.com/watch?v=61rfOCaX258", "https://www.youtube.com/watch?v=B0zYje3s1ik", "https://www.youtube.com/watch?v=N-4qwOH1NgA"],
-                amazon: "https://www.amazon.co.jp/gp/bestsellers/sports/15314341",
-                rakuten: "https://a.r10.to/h5Pqns",
-                desc: "【注目】「ミスに強くて転がりが良い」と今ネットでリアルタイムに一番売れているパターの最新ランキングはこちら👇"
+            "29": {
+                subTitle: "「パター 選び方」のレッスン動画",
+                description: "【注目】「ミスに強くて転がりが良い」と今ネットでリアルタイムに一番売れているパターの最新ランキングはこちら👇",
+                amazonUrl: "https://www.amazon.co.jp/gp/bestsellers/sports/15314341",
+                rakutenUrl: "https://a.r10.to/h5Pqns",
+                videos: [
+                    "https://www.youtube.com/watch?v=61rfOCaX258",
+                    "https://www.youtube.com/watch?v=B0zYje3s1ik",
+                    "https://www.youtube.com/watch?v=N-4qwOH1NgA"
+                ]
             },
-            "パター 比較": {
-                videos: ["https://www.youtube.com/watch?v=VsTL6xRCvh4", "https://www.youtube.com/watch?v=isbE21s37lY", "https://www.youtube.com/watch?v=nPCb-HJNV8s"],
-                amazon: "https://www.amazon.co.jp/gp/bestsellers/sports/15314341",
-                rakuten: "https://a.r10.to/h5Pqns",
-                desc: "【大流行】常にスクエアなインパクトを実現！ツアープロも絶賛する進化した大注目パターはこちら👇"
+            "30": {
+                subTitle: "「パター 比較」のレッスン動画",
+                description: "【大流行】常にスクエアなインパクトを実現！ツアープロも絶賛する進化した大注目パターはこちら👇",
+                amazonUrl: "https://www.amazon.co.jp/gp/bestsellers/sports/15314341",
+                rakutenUrl: "https://a.r10.to/h5Pqns",
+                videos: [
+                    "https://www.youtube.com/watch?v=VsTL6xRCvh4",
+                    "https://www.youtube.com/watch?v=isbE21s37lY",
+                    "https://www.youtube.com/watch?v=nPCb-HJNV8s"
+                ]
             },
-            "100切り 思考": {
-                videos: ["https://www.youtube.com/watch?v=qePsnPN71wo", "https://www.youtube.com/watch?v=zy3eMjTMWcw", "https://www.youtube.com/watch?v=UVURppfy5bw"],
-                amazon: "https://www.amazon.co.jp/EENOUR-%E3%82%B4%E3%83%AB%E3%83%95%E3%83%AC%E3%83%BC%E3%82%B6%E3%83%BC%E8%B7%9D%E9%9B%A2%E8%A8%88-U800/dp/B0DFH1M2BL/",
-                rakuten: "https://a.r10.to/h5BEHc",
-                desc: "【思考を形に】なんとなくの感覚を捨ててコースを攻略！ハザードまでの正確な距離とマネジメントを即座に教えてくれる大ヒットレーザー距離計はこちら👇"
+            "31": {
+                subTitle: "「100切り 思考」のレッスン動画",
+                description: "【思考を形に】なんとなくの感覚を捨ててコースを攻略！ハザードまでの正確な距離とマネジメントを即座に教えてくれる大ヒットレーザー距離計はこちら👇",
+                amazonUrl: "https://www.amazon.co.jp/EENOUR-%E3%82%B4%E3%83%AB%E3%83%95%E3%83%AC%E3%83%BC%E3%82%B6%E3%83%BC%E8%B7%9D%E9%9B%A2%E8%A8%88-U800/dp/B0DFH1M2BL/",
+                rakutenUrl: "https://a.r10.to/h5BEHc",
+                videos: [
+                    "https://www.youtube.com/watch?v=qePsnPN71wo",
+                    "https://www.youtube.com/watch?v=zy3eMjTMWcw",
+                    "https://www.youtube.com/watch?v=UVURppfy5bw"
+                ]
             },
-            "90切り 思考": {
-                videos: ["https://www.youtube.com/watch?v=H4fd7v3vUEg", "https://www.youtube.com/watch?v=yLB-3DdqnLg", "https://www.youtube.com/watch?v=I7D6U3PwUeU"],
-                amazon: "https://www.amazon.co.jp/EENOUR-%E3%82%B4%E3%83%AB%E3%83%95%E3%83%AC%E3%83%BC%E3%82%B6%E3%83%BC%E8%B7%9D%E9%9B%A2%E8%A8%88-U800/dp/B0DFH1M2BL/",
-                rakuten: "https://a.r10.to/h5BEHc",
-                desc: "【堅実な選択】90切りではトラブル排除が肝！正確な距離を知り罠を避ける大ヒットレーザー距離計はこちら👇"
+            "32": {
+                subTitle: "「90切り 思考」のレッスン動画",
+                description: "【堅実な選択】90切りではトラブル排除が肝！正確な距離を知り罠を避ける大ヒットレーザー距離計はこちら👇",
+                amazonUrl: "https://www.amazon.co.jp/EENOUR-%E3%82%B4%E3%83%AB%E3%83%95%E3%83%AC%E3%83%BC%E3%82%B6%E3%83%BC%E8%B7%9D%E9%9B%A2%E8%A8%88-U800/dp/B0DFH1M2BL/",
+                rakutenUrl: "https://a.r10.to/h5BEHc",
+                videos: [
+                    "https://www.youtube.com/watch?v=H4fd7v3vUEg",
+                    "https://www.youtube.com/watch?v=yLB-3DdqnLg",
+                    "https://www.youtube.com/watch?v=I7D6U3PwUeU"
+                ]
             },
-            "ゴルフボール 選び方": {
-                videos: ["https://youtu.be/QcYO2xJIBQE", "https://www.youtube.com/watch?v=1X5NBs_86ss", "https://www.youtube.com/watch?v=-vA4BxjnZ3E"],
-                amazon: "https://www.amazon.co.jp/HONMA-2024-BT2401-%E3%83%9B%E3%83%AF%E3%82%A4%E3%83%88/dp/B0CTLVF8CL/",
-                rakuten: "https://a.r10.to/hPDdku",
-                desc: "【王道比較】圧倒的な飛距離とコスパの「ディスタンス系」か、プロ絶賛のスピン性能と打感の「スピン系」か、あなたに合う極上ボールはこちら👇"
+            "33": {
+                subTitle: "「ゴルフボール 選び方」のレッスン動画",
+                description: "【王道比較】圧倒的な飛距離とコスパの「ディスタンス系」か、プロ絶賛のスピン性能と打感の「スピン系」か、あなたに合う極上ボールはこちら👇",
+                amazonUrl: "https://www.amazon.co.jp/HONMA-2024-BT2401-%E3%83%9B%E3%83%AF%E3%82%A4%E3%83%88/dp/B0CTLVF8CL/",
+                rakutenUrl: "https://a.r10.to/hPDdku",
+                videos: [
+                    "https://youtu.be/QcYO2xJIBQE",
+                    "https://www.youtube.com/watch?v=1X5NBs_86ss",
+                    "https://www.youtube.com/watch?v=-vA4BxjnZ3E"
+                ]
             },
-            "ゴルフボール 比較": {
-                videos: ["https://www.youtube.com/watch?v=nvhEkadND3k", "https://www.youtube.com/watch?v=szTxWueFpP4", "https://youtu.be/Dv2QQ6hjQig"],
-                amazon: "https://www.amazon.co.jp/HONMA-2024-BT2401-%E3%83%9B%E3%83%AF%E3%82%A4%E3%83%88/dp/B0CTLVF8CL/",
-                rakuten: "https://a.r10.to/hPDdku",
-                desc: "【2大王道】圧倒的なコスパと飛距離の「格安ディスタンス系」か、世界中のプロが信頼する「最高峰スピン系」か、徹底比較された代表作はこちら👇"
+            "34": {
+                subTitle: "「ゴルフボール 比較」のレッスン動画",
+                description: "【2大王道】圧倒的なコスパと飛距離の「格安ディスタンス系」か、世界中のプロが信頼する「最高峰スピン系」か、徹底比較された代表作はこちら👇",
+                amazonUrl: "https://www.amazon.co.jp/HONMA-2024-BT2401-%E3%83%9B%E3%83%AF%E3%82%A4%E3%83%88/dp/B0CTLVF8CL/",
+                rakutenUrl: "https://a.r10.to/hPDdku",
+                videos: [
+                    "https://www.youtube.com/watch?v=nvhEkadND3k",
+                    "https://www.youtube.com/watch?v=szTxWueFpP4",
+                    "https://youtu.be/Dv2QQ6hjQig"
+                ]
             },
-            "クラブセッティング": {
-                videos: ["https://www.youtube.com/watch?v=7EYC-68-ekg", "https://www.youtube.com/watch?v=KzL1ZSESn1Y", "https://www.youtube.com/watch?v=NOg9yhI0DHg"],
-                amazon: "https://www.amazon.co.jp/HUAWEI-1-47%E3%82%A4%E3%83%B3%E3%83%81%E5%A4%A7%E7%94%BB%E9%9D%A2/dp/B0FKH3WQ41/",
-                rakuten: "https://a.r10.to/h5rCza",
-                desc: "【番手の距離把握】自分のリアルな飛距離を計測！コース攻略を劇的に優しくする「年間ランキング受賞」の腕時計型ゴルフナビはこちら👇"
+            "35": {
+                subTitle: "「クラブセッティング」のレッスン動画",
+                description: "【番手の距離把握】自分のリアルな飛距離を計測！コース攻略を劇的に優しくする「年間ランキング受賞」の腕時計型ゴルフナビはこちら👇",
+                amazonUrl: "https://www.amazon.co.jp/HUAWEI-1-47%E3%82%A4%E3%83%B3%E3%83%81%E5%A4%A7%E7%94%BB%E9%9D%A2/dp/B0FKH3WQ41/",
+                rakutenUrl: "https://a.r10.to/h5rCza",
+                videos: [
+                    "https://www.youtube.com/watch?v=7EYC-68-ekg",
+                    "https://www.youtube.com/watch?v=KzL1ZSESn1Y",
+                    "https://www.youtube.com/watch?v=NOg9yhI0DHg"
+                ]
             },
-            "練習法": {
-                videos: ["https://www.youtube.com/watch?v=rW4zgu5b4Bo", "https://www.youtube.com/watch?v=pPn5apFFoUw", "https://www.youtube.com/watch?v=ub5XlUZ2U6w"],
-                amazon: "https://www.amazon.co.jp/Danact-%E3%82%B4%E3%83%AB%E3%83%95%E7%B7%B4%E7%BF%92%E5%99%A8%E5%85%B7-%E3%82%B9%E3%82%A4%E3%83%B3%E3%82%B0%E3%83%88%E3%83%AC%E3%83%BC%E3%83%8A%E3%83%BC/dp/B0BKKZJJ1X/",
-                rakuten: "https://a.r10.to/hgXuJI",
-                desc: "【やったもん勝ち】正しいスイング軌道とインパクトのタイミングを音で覚える！理想のフォームを体に染み込ませる大ヒットギアはこちら👇"
+            "36": {
+                subTitle: "「練習法」のレッスン動画",
+                description: "【やったもん勝ち】正しいスイング軌道とインパクトのタイミングを音で覚える！理想のフォームを体に染み込ませる大ヒットギアはこちら👇",
+                amazonUrl: "https://www.amazon.co.jp/Danact-%E3%82%B4%E3%83%AB%E3%83%95%E7%B7%B4%E7%BF%92%E5%99%A8%E5%85%B7-%E3%82%B9%E3%82%A4%E3%83%B3%E3%82%B0%E3%83%88%E3%83%AE%E3%83%BC%E3%83%8A%E3%83%BC/dp/B0BKKZJJ1X/",
+                rakutenUrl: "https://a.r10.to/hgXuJI",
+                videos: [
+                    "https://www.youtube.com/watch?v=rW4zgu5b4Bo",
+                    "https://www.youtube.com/watch?v=pPn5apFFoUw",
+                    "https://www.youtube.com/watch?v=ub5XlUZ2U6w"
+                ]
             },
-            "自宅 練習": {
-                videos: ["https://www.youtube.com/watch?v=efAQa0CSCiE", "https://www.youtube.com/watch?v=uJwKXheMXVo", "https://www.youtube.com/watch?v=wI36k8sgNZw"],
-                amazon: "https://www.amazon.co.jp/%E3%83%91%E3%82%BF%E3%83%BC%E3%83%9E%E3%83%83%E3%83%88%E5%B7%A5%E6%88%BF-%E3%82%B9%E3%83%BC%E3%83%91%E3%83%BC%E3%83%99%E3%83%B3%E3%83%88/dp/B008I42VUC/",
-                rakuten: "https://a.r10.to/hPOJpX",
-                desc: "【自宅がグリーンに】室内アプローチやパターの距離感を本番基準で磨ける！実際のベント芝と同じ転がりを再現した大ヒット日本製マットはこちら👇"
+            "37": {
+                subTitle: "「自宅 練習」のレッスン動画",
+                description: "【自宅がグリーンに】室内アプローチやパターの距離感を本番基準で磨ける！実際のベント芝と同じ転がりを再現した大ヒット日本製マットはこちら👇",
+                amazonUrl: "https://www.amazon.co.jp/%E3%83%91%E3%82%BF%E3%83%BC%E3%83%9E%E3%83%83%E3%83%88%E5%B7%A5%E6%88%BF-%E3%82%B9%E3%83%BC%E3%83%91%E3%83%BC%E3%83%99%E3%83%B3%E3%83%88/dp/B008I42VUC/",
+                rakutenUrl: "https://a.r10.to/hPOJpX",
+                videos: [
+                    "https://www.youtube.com/watch?v=efAQa0CSCiE",
+                    "https://www.youtube.com/watch?v=uJwKXheMXVo",
+                    "https://www.youtube.com/watch?v=wI36k8sgNZw"
+                ]
             }
         };
 
-        // メイン制御処理
-        document.addEventListener("DOMContentLoaded", () => {
-            const keyword = getKeywordParam();
-            const keywordDisplay = document.getElementById("keyword-display");
-            const videoList = document.getElementById("video-list");
-            const itemCard = document.getElementById("item-card");
-            const itemDescription = document.getElementById("item-description");
-            const amazonLink = document.getElementById("amazon-link");
-            const rakutenLink = document.getElementById("rakuten-link");
-
-            if (!keyword) {
-                keywordDisplay.textContent = "キーワードが指定されていません";
-                videoList.innerHTML = '<div class="error-msg">URLの末尾に ?k=キーワード をつけてアクセスしてください。</div>';
-                return;
+        // YouTubeの通常URLを「埋め込み用URL」に変換する関数
+        function getEmbedUrl(url) {
+            if(!url) return "";
+            let videoId = "";
+            if (url.includes("v=")) {
+                videoId = url.split("v=")[1].split("&")[0];
+            } else if (url.includes("youtu.be/")) {
+                videoId = url.split("youtu.be/")[1].split("?")[0];
+            } else if (url.includes("embed/")) {
+                return url;
             }
+            return videoId ? "https://www.youtube.com/embed/" + videoId : url;
+        }
 
-            keywordDisplay.textContent = `「${keyword}」のレッスン動画`;
+        // パラメータ解析・コンテンツ表示関数
+        function loadContent() {
+            const urlParams = new URLSearchParams(window.location.search);
+            // ManyChatから渡されるパラメータ（デフォルトは "1" ）
+            const id = urlParams.get('id') || "1";
 
-            // データベースから完全一致検索
-            const data = dynamicData[keyword];
-
-            if (data) {
-                // 1. YouTube動画のレンダリング
-                let videoCount = 0;
-                data.videos.forEach(url => {
-                    const videoId = getYouTubeId(url);
-                    if (videoId) {
-                        videoCount++;
-                        const container = document.createElement("div");
-                        container.className = "video-container";
-                        
-                        const iframe = document.createElement("iframe");
-                        iframe.src = `https://www.youtube.com/embed/${videoId}?rel=0&modestbranding=1`;
-                        iframe.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
-                        iframe.allowFullscreen = true;
-                        
-                        container.appendChild(iframe);
-                        videoList.appendChild(container);
-                    }
-                });
-
-                if (videoCount === 0) {
-                    videoList.innerHTML = '<div class="error-msg">表示できる動画が見つかりませんでした。</div>';
+            if (videoDatabase[id]) {
+                const data = videoDatabase[id];
+                
+                // タイトル・紹介文・各リンクの更新
+                document.getElementById('sub-header').textContent = data.subTitle;
+                document.getElementById('item-title').innerHTML = data.description.replace(/\n/g, '<br>');
+                document.getElementById('amazon-link').href = data.amazonUrl || defaultAmazon;
+                document.getElementById('rakuten-link').href = data.rakutenUrl;
+                
+                // 動画リストの動的生成（3本でも4本でも綺麗にループしてiframeを出力します）
+                const videoWrapper = document.getElementById('video-wrapper');
+                videoWrapper.innerHTML = ""; // 初期化
+                
+                if (data.videos && data.videos.length > 0) {
+                    data.videos.forEach(videoUrl => {
+                        const embedUrl = getEmbedUrl(videoUrl);
+                        if (embedUrl) {
+                            const container = document.createElement('div');
+                            container.className = 'video-container';
+                            
+                            const iframe = document.createElement('iframe');
+                            iframe.src = embedUrl;
+                            iframe.allowFullscreen = true;
+                            
+                            container.appendChild(iframe);
+                            videoWrapper.appendChild(container);
+                        }
+                    });
                 }
-
-                // 2. マネタイズ現物商品の表示制御
-                if (data.desc) {
-                    itemDescription.textContent = data.desc;
-                    
-                    // Amazonリンク制御（空なら非表示）
-                    if (data.amazon && data.amazon.trim() !== "") {
-                        amazonLink.href = data.amazon;
-                        amazonLink.style.display = "flex";
-                    } else {
-                        amazonLink.style.style.display = "none";
-                    }
-
-                    // 楽天リンク制御（空なら非表示）
-                    if (data.rakuten && data.rakuten.trim() !== "") {
-                        rakutenLink.href = data.rakuten;
-                        rakutenLink.style.display = "flex";
-                    } else {
-                        rakutenLink.style.display = "none";
-                    }
-
-                    // 両方空でなければカード自体を表示
-                    if (data.amazon || data.rakuten) {
-                        itemCard.style.display = "block";
-                    }
-                }
-            } else {
-                // 該当データがない場合のエラー表示
-                videoList.innerHTML = `<div class="error-msg">「${keyword}」に対応する動画ライブラリがまだ登録されていません。</div>`;
             }
-        });
+        }
+
+        window.onload = loadContent;
     </script>
+
 </body>
 </html>
